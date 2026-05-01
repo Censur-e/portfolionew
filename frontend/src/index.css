@@ -1,0 +1,180 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  margin: 0;
+  background: #050505;
+  color: #f5f5f5;
+  font-family: 'Inter', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: #ffffff;
+  color: #050505;
+}
+
+/* Hide native cursor on desktop where custom cursor is active */
+@media (hover: hover) and (pointer: fine) {
+  body.censure-cursor-active,
+  body.censure-cursor-active * {
+    cursor: none !important;
+  }
+}
+
+code {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 2%;
+    --foreground: 0 0% 96%;
+    --card: 0 0% 4%;
+    --card-foreground: 0 0% 96%;
+    --popover: 0 0% 4%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 4%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 0 0% 12%;
+    --accent-foreground: 0 0% 96%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 96%;
+    --border: 0 0% 14%;
+    --input: 0 0% 14%;
+    --ring: 0 0% 80%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground; }
+}
+
+/* ---------- Typography utilities ---------- */
+.font-display {
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: -0.04em;
+}
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ---------- Hidden grid revealed by flashlight cursor ---------- */
+.flashlight-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.18) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.18) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(circle 220px at var(--mx, -200px) var(--my, -200px), rgba(0,0,0,0.95), transparent 70%);
+          mask-image: radial-gradient(circle 220px at var(--mx, -200px) var(--my, -200px), rgba(0,0,0,0.95), transparent 70%);
+  transition: opacity 0.4s ease;
+}
+
+/* ---------- Custom cursor ---------- */
+.cen-cursor {
+  position: fixed;
+  top: 0; left: 0;
+  width: 14px; height: 14px;
+  border-radius: 9999px;
+  background: #ffffff;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: difference;
+  transform: translate(-50%, -50%);
+  transition: width 0.25s ease, height 0.25s ease, background 0.25s ease;
+}
+.cen-cursor.is-hover {
+  width: 56px; height: 56px;
+  background: #ffffff;
+}
+.cen-cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  width: 38px; height: 38px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255,255,255,0.45);
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease, opacity 0.3s ease, border-color 0.3s ease;
+}
+.cen-cursor-ring.is-hover { opacity: 0; }
+
+/* ---------- Marquee ---------- */
+@keyframes marquee-l { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes marquee-r { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+.marquee-track-l { animation: marquee-l 38s linear infinite; }
+.marquee-track-r { animation: marquee-r 46s linear infinite; }
+.marquee-track-slow { animation: marquee-l 60s linear infinite; }
+
+/* Outline text used in marquee */
+.text-outline {
+  -webkit-text-stroke: 1.2px rgba(255,255,255,0.85);
+  color: transparent;
+}
+
+/* ---------- Spinning ring scroll indicator ---------- */
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.spin-slow { animation: spin-slow 14s linear infinite; }
+
+/* ---------- Caret blink ---------- */
+@keyframes blink { 50% { opacity: 0; } }
+.caret { animation: blink 1.05s steps(1) infinite; }
+
+/* ---------- Stagger reveal ---------- */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.9s cubic-bezier(.22,.61,.36,1), transform 0.9s cubic-bezier(.22,.61,.36,1); }
+.reveal.in-view { opacity: 1; transform: translateY(0); }
+
+/* ---------- Glassmorphism ---------- */
+.glass {
+  background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015));
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ---------- Magnetic anchor base ---------- */
+.magnetic { display: inline-block; will-change: transform; }
+
+/* ---------- Horizontal scroll hide scrollbar ---------- */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ---------- Project image distortion on hover ---------- */
+.project-img { transition: transform 0.7s cubic-bezier(.22,.61,.36,1), filter 0.7s ease; filter: grayscale(0.4) contrast(1.05); }
+.project-card:hover .project-img { transform: scale(1.06) skewX(-1.2deg); filter: grayscale(0) contrast(1.1); }
+.project-card:hover .project-title { -webkit-text-stroke: 1.2px #fff; color: transparent; }
+
+/* ---------- Noise overlay ---------- */
+.noise::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.06;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.9'/></svg>");
+  mix-blend-mode: overlay;
+}
+
+/* ---------- Hero floating particles ---------- */
+@keyframes float-1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(20px,-30px); } }
+@keyframes float-2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-30px,20px); } }
+@keyframes float-3 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(15px,25px); } }
+.float-1 { animation: float-1 9s ease-in-out infinite; }
+.float-2 { animation: float-2 11s ease-in-out infinite; }
+.float-3 { animation: float-3 13s ease-in-out infinite; }

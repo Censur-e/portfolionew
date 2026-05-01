@@ -1,0 +1,2 @@
+/* App-level overrides — keep minimal. Most styles live in index.css */
+.App { background: #050505; min-height: 100vh; position: relative; }
