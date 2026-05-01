@@ -1,126 +1,94 @@
-// Mock data for Censure portfolio — UI Designer & Scripter
+// Default site content (French / Roblox-Luau-Figma).
+// Used as a fallback if the API is unreachable. The backend seeds the same defaults on first run.
 
-export const HERO = {
-  name: "Censure",
-  role: "UI Designer & Scripter",
-  headlineLine1: "Designing the",
-  headlineLine2: "interface.",
-  headlineLine3: "Scripting the",
-  headlineLine4: "experience.",
-  status: "Available for select collaborations — 2025",
+export const DEFAULT_CONTENT = {
+  hero: {
+    name: "Censure",
+    role: "UI Designer & Scripter Roblox",
+    headlineLine1: "Designer",
+    headlineLine2: "l'interface.",
+    headlineLine3: "Scripter",
+    headlineLine4: "l'expérience.",
+    status: "Disponible pour collaborations sélectionnées — 2025",
+  },
+  about: {
+    bio: [
+      "Je suis Censure — développeur Roblox Studio et UI Designer indépendant.",
+      "Je conçois mes interfaces dans Figma, puis je leur donne vie sur Roblox avec Luau — menus, HUD, systèmes de lobby, animations, tout ce qui rend un jeu vivant.",
+      "Je travaille à la couture du design et du gameplay : ce qui est beau doit être jouable, ce qui est jouable doit être beau.",
+    ],
+    meta: [
+      { k: "Basé", v: "Roblox / À distance" },
+      { k: "Focus", v: "UI Roblox · Luau · Figma" },
+      { k: "Années", v: "07" },
+    ],
+    terminalLines: [
+      "$ whoami",
+      "censure — développeur roblox & ui designer",
+      "$ stack --core",
+      "luau · roblox studio · roact",
+      "$ stack --design",
+      "figma",
+      "$ philosophie",
+      "\"le détail, c'est la dévotion.\"",
+      "$ statut",
+      "j'accepte 2 projets ce trimestre ▍",
+    ],
+  },
+  projects: [
+    {
+      id: 1, index: "01", title: "Apex Lobby",
+      subtitle: "Système de lobby compétitif",
+      year: "2025", role: "UI · Luau",
+      tags: ["Roblox", "UI", "Luau"],
+      image: "https://images.unsplash.com/photo-1700665654047-1c11a46efd6b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHw0fHxVSSUyMGRlc2lnbnxlbnwwfHx8YmxhY2t8MTc3NzY3NTE3MXww&ixlib=rb-4.1.0&q=85",
+      description: "Un lobby modulaire pour un jeu PvP : matchmaking, classements, vitrine de skins. Pensé dans Figma, scripé en Luau.",
+    },
+    {
+      id: 2, index: "02", title: "Null Sector",
+      subtitle: "Identité visuelle d'un univers SF",
+      year: "2024", role: "Direction artistique",
+      tags: ["Roblox", "Brand", "World"],
+      image: "https://images.unsplash.com/photo-1632059368252-be6d65abc4e2?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzF8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMDNEfGVufDB8fHxibGFja3wxNzc3Njc1MTcxfDA&ixlib=rb-4.1.0&q=85",
+      description: "Identité graphique complète d'un univers Roblox : logo, HUD, typographies in-game, gabarits Figma exportés en assets.",
+    },
+    {
+      id: 3, index: "03", title: "Halcyon",
+      subtitle: "HUD apaisant pour jeu d'exploration",
+      year: "2024", role: "UI · Prototypage",
+      tags: ["Roblox", "HUD", "Mobile"],
+      image: "https://images.unsplash.com/photo-1703944159188-ab7298c6d793?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzF8MHwxfHNlYXJjaHw0fHxtb2JpbGUlMjBhcHAlMjBkYXJrfGVufDB8fHxibGFja3wxNzc3Njc1MTY1fDA&ixlib=rb-4.1.0&q=85",
+      description: "Un HUD minimal sans surcharge : transitions calées sur la respiration, palette sombre, lisible sur mobile.",
+    },
+    {
+      id: 4, index: "04", title: "Monolith",
+      subtitle: "Intro narrative typographique",
+      year: "2023", role: "Motion · Luau",
+      tags: ["Roblox", "Motion", "Type"],
+      image: "https://images.unsplash.com/photo-1649015931204-15a3c789e6ea?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzF8MHwxfHNlYXJjaHw0fHxicnV0YWxpc3QlMjB0eXBvZ3JhcGh5fGVufDB8fHxibGFja3wxNzc3Njc1MTY1fDA&ixlib=rb-4.1.0&q=85",
+      description: "Une intro brutaliste pour un jeu narratif Roblox : typographie massive, TweenService calé à la frame.",
+    },
+  ],
+  skillsRow1: ["Design d'interface", "Motion", "Luau", "Roblox Studio", "Systèmes UI", "Prototypage"],
+  skillsRow2: ["Typographie", "TweenService", "Roact", "Figma", "Animation", "Direction artistique"],
+  skillsRow3: ["UX Produit", "Systèmes de marque", "Game Design", "Narration", "Front-end"],
+  socials: [
+    { label: "Discord", handle: "cen_sure", href: "#" },
+    { label: "Roblox", handle: "censure", href: "#" },
+    { label: "X / Twitter", handle: "@censure", href: "#" },
+    { label: "Figma", handle: "censure", href: "#" },
+  ],
+  contact: {
+    primary: "cen_sure",
+    primaryLabel: "Discord",
+    caption: "Un projet ? Écris-moi en DM. Je lis tout.",
+    copyright: "© 2025 Censure — Chaque pixel est intentionnel.",
+  },
 };
 
-export const ABOUT = {
-  bio: [
-    "I'm Censure — a designer who codes and a scripter who designs.",
-    "For the past 7 years I've been crafting interfaces that don't just look sharp, but feel alive: micro-interactions, motion systems, and physics-driven scroll experiences.",
-    "I work the seam between aesthetics and engineering — turning brand into product, and product into a feeling.",
-  ],
-  meta: [
-    { k: "Based", v: "Everywhere / Remote" },
-    { k: "Focus", v: "Product UI · Motion · Web" },
-    { k: "Years", v: "07" },
-  ],
-  terminalLines: [
-    "$ whoami",
-    "censure — interface architect",
-    "$ stack --core",
-    "react · typescript · gsap · three.js",
-    "$ stack --design",
-    "figma · framer · after effects",
-    "$ philosophy",
-    "\"motion is meaning. detail is devotion.\"",
-    "$ status",
-    "taking on 2 projects this quarter ▍",
-  ],
-};
-
-export const PROJECTS = [
-  {
-    id: 1,
-    index: "01",
-    title: "Aperture OS",
-    subtitle: "Fintech dashboard system",
-    year: "2025",
-    role: "Lead UI · Motion",
-    tags: ["Product", "Design System", "Motion"],
-    image: "https://images.unsplash.com/photo-1700665654047-1c11a46efd6b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHw0fHxVSSUyMGRlc2lnbnxlbnwwfHx8YmxhY2t8MTc3NzY3NTE3MXww&ixlib=rb-4.1.0&q=85",
-    description: "A modular trading interface built around glassmorphic surfaces, dense data, and zero-latency feel.",
-  },
-  {
-    id: 2,
-    index: "02",
-    title: "Null Space",
-    subtitle: "Generative identity",
-    year: "2024",
-    role: "Creative Coding",
-    tags: ["WebGL", "Generative", "Brand"],
-    image: "https://images.unsplash.com/photo-1632059368252-be6d65abc4e2?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzF8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMDNEfGVufDB8fHxibGFja3wxNzc3Njc1MTcxfDA&ixlib=rb-4.1.0&q=85",
-    description: "A living identity for a research lab — every visit renders a unique 3D form from the visitor's seed.",
-  },
-  {
-    id: 3,
-    index: "03",
-    title: "Halcyon",
-    subtitle: "Sleep & focus app",
-    year: "2024",
-    role: "UI · Prototyping",
-    tags: ["Mobile", "Wellness", "Audio"],
-    image: "https://images.unsplash.com/photo-1703944159188-ab7298c6d793?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzF8MHwxfHNlYXJjaHw0fHxtb2JpbGUlMjBhcHAlMjBkYXJrfGVufDB8fHxibGFja3wxNzc3Njc1MTY1fDA&ixlib=rb-4.1.0&q=85",
-    description: "An ambient sleep companion with breathing-paced transitions and zero blue-light interface.",
-  },
-  {
-    id: 4,
-    index: "04",
-    title: "Monolith",
-    subtitle: "Editorial / brutalist web",
-    year: "2023",
-    role: "Art Direction · Build",
-    tags: ["Editorial", "Brutalism", "Type"],
-    image: "https://images.unsplash.com/photo-1649015931204-15a3c789e6ea?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzF8MHwxfHNlYXJjaHw0fHxicnV0YWxpc3QlMjB0eXBvZ3JhcGh5fGVufDB8fHxibGFja3wxNzc3Njc1MTY1fDA&ixlib=rb-4.1.0&q=85",
-    description: "A type-driven editorial platform — every article is a custom layout, every spread is an exhibit.",
-  },
-];
-
-export const SKILLS_ROW_1 = [
-  "Interface Design",
-  "Motion",
-  "React",
-  "Creative Coding",
-  "Design Systems",
-  "WebGL",
-  "Prototyping",
-];
-
-export const SKILLS_ROW_2 = [
-  "Typography",
-  "Three.js",
-  "GSAP",
-  "Figma",
-  "Framer",
-  "Art Direction",
-  "Scripting",
-];
-
-export const SKILLS_ROW_3 = [
-  "Product UX",
-  "Brand Systems",
-  "Shaders",
-  "Lottie",
-  "Storytelling",
-  "Front-end",
-];
-
-export const SOCIALS = [
-  { label: "Discord", handle: "cen_sure", href: "#" },
-  { label: "Read.cv", handle: "censure", href: "#" },
-  { label: "X / Twitter", handle: "@censure", href: "#" },
-  { label: "Are.na", handle: "censure", href: "#" },
-];
-
-export const CONTACT = {
-  primary: "cen_sure",
-  primaryLabel: "Discord",
-  caption: "Have a project? Send a DM. I read everything.",
-  copyright: "© 2025 Censure — All pixels deliberate.",
+export const NAV_LABELS = {
+  home: "Accueil",
+  about: "À propos",
+  work: "Projets",
+  contact: "Contact",
 };

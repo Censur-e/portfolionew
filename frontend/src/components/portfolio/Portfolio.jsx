@@ -6,9 +6,32 @@ import About from "./About";
 import Projects from "./Projects";
 import Skills from "./Skills";
 import Footer from "./Footer";
+import { DEFAULT_CONTENT } from "../../mock";
+import { contentApi } from "../../lib/api";
+
+export const SiteContext = React.createContext(DEFAULT_CONTENT);
 
 const Portfolio = () => {
-  // Intersection-observer for stagger reveal
+  const [content, setContent] = React.useState(DEFAULT_CONTENT);
+  const [loaded, setLoaded] = React.useState(false);
+
+  React.useEffect(() => {
+    let mounted = true;
+    contentApi
+      .get()
+      .then((res) => {
+        if (mounted && res.data) setContent(res.data);
+      })
+      .catch(() => {
+        // fallback to defaults already set
+      })
+      .finally(() => mounted && setLoaded(true));
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  // Stagger reveal
   useEffect(() => {
     const els = document.querySelectorAll(".reveal");
     const obs = new IntersectionObserver(
@@ -24,9 +47,9 @@ const Portfolio = () => {
     );
     els.forEach((el) => obs.observe(el));
     return () => obs.disconnect();
-  }, []);
+  }, [loaded]);
 
-  // Smooth scroll for in-page anchors
+  // Smooth in-page anchor scroll
   useEffect(() => {
     const onClick = (e) => {
       const a = e.target.closest('a[href^="#"]');
@@ -44,15 +67,17 @@ const Portfolio = () => {
   }, []);
 
   return (
-    <main className="relative bg-[#050505] text-white">
-      <CustomCursor />
-      <Header />
-      <Hero />
-      <About />
-      <Projects />
-      <Skills />
-      <Footer />
-    </main>
+    <SiteContext.Provider value={content}>
+      <main className="relative bg-[#050505] text-white">
+        <CustomCursor />
+        <Header />
+        <Hero />
+        <About />
+        <Projects />
+        <Skills />
+        <Footer />
+      </main>
+    </SiteContext.Provider>
   );
 };
 

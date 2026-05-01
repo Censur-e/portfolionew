@@ -1,8 +1,7 @@
-import React from "react";
-import { SKILLS_ROW_1, SKILLS_ROW_2, SKILLS_ROW_3 } from "../../mock";
+import React, { useContext } from "react";
+import { SiteContext } from "./Portfolio";
 
 const Row = ({ items, animClass, outline = false }) => {
-  // Duplicate the items for seamless loop
   const loop = [...items, ...items];
   return (
     <div className="overflow-hidden whitespace-nowrap">
@@ -24,6 +23,7 @@ const Row = ({ items, animClass, outline = false }) => {
 };
 
 const Skills = () => {
+  const { skillsRow1, skillsRow2, skillsRow3 } = useContext(SiteContext);
   return (
     <section id="skills" className="relative w-full py-28 md:py-40">
       <div className="mx-auto max-w-[1640px] px-6 md:px-10">
@@ -34,17 +34,17 @@ const Skills = () => {
       </div>
 
       <div className="space-y-2 md:space-y-3">
-        <Row items={SKILLS_ROW_1} animClass="marquee-track-l" />
-        <Row items={SKILLS_ROW_2} animClass="marquee-track-r" outline />
-        <Row items={SKILLS_ROW_3} animClass="marquee-track-slow" />
+        <Row items={skillsRow1} animClass="marquee-track-l" />
+        <Row items={skillsRow2} animClass="marquee-track-r" outline />
+        <Row items={skillsRow3} animClass="marquee-track-slow" />
       </div>
 
       <div className="mx-auto max-w-[1640px] px-6 md:px-10 mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-white/60 text-sm md:text-base">
         <p>
-          A toolkit assembled across years — sharpened on shipping. Tools change; taste compounds.
+          Une boîte à outils assemblée au fil des années — affûtée par la pratique. Les outils changent ; le goût s'accumule.
         </p>
         <p className="md:col-start-3 md:text-right">
-          Always learning. Currently dabbling in shaders, spatial UI, and on-device AI affordances.
+          Toujours en train d'apprendre. En ce moment : Roact avancé, animations chaînées, et game feel.
         </p>
       </div>
     </section>

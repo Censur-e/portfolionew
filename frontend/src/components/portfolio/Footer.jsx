@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { CONTACT, SOCIALS } from "../../mock";
+import React, { useContext, useEffect, useState } from "react";
 import { Copy, Check } from "lucide-react";
+import { SiteContext } from "./Portfolio";
 
 const Footer = () => {
+  const { contact, socials } = useContext(SiteContext);
   const [copied, setCopied] = useState(false);
   const [time, setTime] = useState("");
 
@@ -10,7 +11,7 @@ const Footer = () => {
     const update = () => {
       const d = new Date();
       setTime(
-        d.toLocaleTimeString("en-GB", {
+        d.toLocaleTimeString("fr-FR", {
           hour: "2-digit",
           minute: "2-digit",
           second: "2-digit",
@@ -25,7 +26,7 @@ const Footer = () => {
 
   const copyHandle = async () => {
     try {
-      await navigator.clipboard.writeText(CONTACT.primary);
+      await navigator.clipboard.writeText(contact.primary);
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     } catch (e) {
@@ -40,45 +41,41 @@ const Footer = () => {
           <span className="w-8 h-px bg-white/40" />
           (04) Contact
         </div>
-        <p className="max-w-2xl text-white/60 text-base md:text-lg">
-          {CONTACT.caption}
-        </p>
+        <p className="max-w-2xl text-white/60 text-base md:text-lg">{contact.caption}</p>
       </div>
 
-      {/* Massive Discord handle as a link */}
       <button
         onClick={copyHandle}
         data-cursor="hover"
         className="group block w-full text-left mt-12 md:mt-16 px-6 md:px-10 py-10 md:py-16 border-y border-white/10 hover:bg-white hover:text-black transition-colors duration-500"
-        aria-label="Copy Discord handle"
+        aria-label="Copier le pseudo Discord"
       >
         <div className="flex items-start justify-between gap-6 max-w-[1640px] mx-auto">
           <div>
             <div className="font-mono text-[11px] uppercase tracking-[0.25em] opacity-60 mb-3">
-              {CONTACT.primaryLabel} — click to copy
+              {contact.primaryLabel} — clique pour copier
             </div>
             <div className="font-display font-semibold tracking-[-0.05em] leading-[0.85] text-[14vw] md:text-[12vw] lg:text-[10.5vw] break-all">
-              {CONTACT.primary}
+              {contact.primary}
             </div>
           </div>
           <div className="shrink-0 mt-4 hidden md:flex items-center gap-2 font-mono text-xs uppercase tracking-[0.25em] opacity-70">
             {copied ? (
               <>
-                <Check className="w-4 h-4" strokeWidth={1.5} /> Copied
+                <Check className="w-4 h-4" strokeWidth={1.5} /> Copié
               </>
             ) : (
               <>
-                <Copy className="w-4 h-4" strokeWidth={1.5} /> Copy
+                <Copy className="w-4 h-4" strokeWidth={1.5} /> Copier
               </>
             )}
           </div>
         </div>
       </button>
 
-      {/* Socials grid */}
       <div className="mx-auto max-w-[1640px] px-6 md:px-10 mt-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {SOCIALS.map((s) => (
+          {socials.map((s) => (
             <a
               key={s.label}
               href={s.href}
@@ -95,14 +92,9 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Bottom row */}
       <div className="mx-auto max-w-[1640px] px-6 md:px-10 mt-16 flex flex-wrap items-center justify-between gap-4">
-        <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/40">
-          {CONTACT.copyright}
-        </div>
-        <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/40">
-          Local time — {time}
-        </div>
+        <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/40">{contact.copyright}</div>
+        <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/40">Heure locale — {time}</div>
       </div>
     </footer>
   );

@@ -1,64 +1,66 @@
-import React, { useEffect, useState } from "react";
-import { ABOUT } from "../../mock";
+import React, { useContext, useEffect, useState } from "react";
+import { SiteContext } from "./Portfolio";
 
 const About = () => {
+  const { about } = useContext(SiteContext);
   const [printed, setPrinted] = useState([]);
   const [done, setDone] = useState(false);
 
-  // Typing animation — starts when section enters viewport
   useEffect(() => {
-    let timers = [];
+    setPrinted([]);
+    setDone(false);
+    const timers = [];
+    let observer;
     const start = () => {
-      ABOUT.terminalLines.forEach((line, i) => {
+      about.terminalLines.forEach((line, i) => {
         const t = setTimeout(() => {
           setPrinted((p) => [...p, line]);
-          if (i === ABOUT.terminalLines.length - 1) setDone(true);
+          if (i === about.terminalLines.length - 1) setDone(true);
         }, i * 380);
         timers.push(t);
       });
     };
-    const obs = new IntersectionObserver(
+    observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           start();
-          obs.disconnect();
+          observer.disconnect();
         }
       },
       { threshold: 0.3 }
     );
     const el = document.getElementById("about");
-    if (el) obs.observe(el);
+    if (el) observer.observe(el);
     return () => {
       timers.forEach(clearTimeout);
-      obs.disconnect();
+      observer && observer.disconnect();
     };
-  }, []);
+  }, [about.terminalLines]);
 
   return (
     <section id="about" className="relative w-full py-32 md:py-44">
       <div className="mx-auto max-w-[1640px] px-6 md:px-10">
         <div className="flex items-center gap-4 font-mono text-[11px] uppercase tracking-[0.25em] text-white/50 mb-12">
           <span className="w-8 h-px bg-white/40" />
-          (01) About
+          (01) À propos
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-          {/* Left — glassmorphism bio */}
           <div className="lg:col-span-7 lg:col-start-1">
             <div className="glass rounded-2xl p-8 md:p-12 relative overflow-hidden">
               <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-white/[0.04] blur-3xl pointer-events-none" />
               <h2 className="font-display text-white text-4xl md:text-6xl font-semibold leading-[0.95] tracking-[-0.03em]">
-                A practice of <span className="text-outline">precise</span> craft.
+                Une pratique de <span className="text-outline">l'artisanat</span> précis.
               </h2>
               <div className="mt-8 space-y-5 max-w-2xl">
-                {ABOUT.bio.map((p, i) => (
+                {about.bio.map((p, i) => (
                   <p key={i} className="text-white/70 text-base md:text-lg leading-relaxed">
                     {p}
                   </p>
                 ))}
               </div>
               <div className="mt-10 grid grid-cols-3 gap-6 border-t border-white/10 pt-8">
-                {ABOUT.meta.map((m) => (
+                {about.meta.map((m) => (
                   <div key={m.k}>
                     <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/40">{m.k}</div>
                     <div className="mt-2 text-white text-sm md:text-base">{m.v}</div>
@@ -68,7 +70,6 @@ const About = () => {
             </div>
           </div>
 
-          {/* Right — terminal */}
           <div className="lg:col-span-5 lg:mt-16">
             <div className="rounded-2xl border border-white/10 bg-black overflow-hidden">
               <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10">
@@ -85,7 +86,7 @@ const About = () => {
                 ))}
                 <span className="caret inline-block w-2 h-4 align-middle bg-white ml-1" aria-hidden="true" />
                 {done && (
-                  <div className="mt-4 text-white/30 text-[11px]">— process idle. ready when you are.</div>
+                  <div className="mt-4 text-white/30 text-[11px]">— processus inactif. prêt quand tu l'es.</div>
                 )}
               </div>
             </div>

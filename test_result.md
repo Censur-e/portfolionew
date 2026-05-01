@@ -101,3 +101,144 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Censure portfolio backend API testing"
+
+backend:
+  - task: "Root API endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "GET /api/ returns correct message 'Censure portfolio API'. Test passed."
+
+  - task: "Public content endpoint with auto-seeding"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "GET /api/content works correctly. Returns all required keys (hero, about, projects, skillsRow1-3, socials, contact). Auto-seeding works on first call. hero.name='Censure' and about.bio is non-empty list with 3 items. Test passed."
+
+  - task: "Authentication - Login with valid credentials"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "POST /api/auth/login with username='CensureSiteWeb' and password='14621462aBaB' returns 200 with token and expires_in=604800. Test passed."
+
+  - task: "Authentication - Login with invalid credentials"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "POST /api/auth/login with bad credentials correctly returns 401 with detail 'Identifiants incorrects'. Test passed."
+
+  - task: "Authentication - Get user info without token"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "GET /api/auth/me without Authorization header correctly returns 401. Test passed."
+
+  - task: "Authentication - Get user info with valid token"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "GET /api/auth/me with valid Bearer token returns 200 with username='CensureSiteWeb'. Test passed."
+
+  - task: "Content update without authentication"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "PUT /api/content without Authorization header correctly returns 401. Test passed."
+
+  - task: "Content update with authentication and persistence"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "PUT /api/content with valid token successfully updates content. Changed hero.name to 'Censure Updated', verified persistence with GET request, then restored to 'Censure'. All operations successful. Test passed."
+
+  - task: "Content reset to defaults"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "POST /api/content/reset with valid token returns 200 and successfully resets content to defaults. Verified hero.name='Censure' and French content in about.bio. Test passed."
+
+frontend:
+  - task: "Frontend testing"
+    implemented: false
+    working: "NA"
+    file: ""
+    stuck_count: 0
+    priority: "low"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Frontend testing not performed as per testing agent instructions (backend only)."
+
+metadata:
+  created_by: "testing_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "All backend endpoints tested and verified"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "testing"
+    message: "Completed comprehensive backend API testing. All 9 test scenarios (16 individual test assertions) passed successfully. Backend is fully functional and ready for production. All endpoints working correctly: root endpoint, public content with auto-seeding, authentication (login, token validation), protected content updates with persistence, and content reset. No issues found."

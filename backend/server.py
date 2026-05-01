@@ -1,87 +1,265 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
-import os
-import logging
+from pydantic import BaseModel, Field
+from typing import List, Optional
+from datetime import datetime, timedelta
 from pathlib import Path
-from pydantic import BaseModel, Field, ConfigDict
-from typing import List
-import uuid
-from datetime import datetime, timezone
-
+import os
+import jwt
+import logging
 
 ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
+load_dotenv(ROOT_DIR / ".env")
 
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+MONGO_URL = os.environ["MONGO_URL"]
+DB_NAME = os.environ["DB_NAME"]
+ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "CensureSiteWeb")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "14621462aBaB")
+JWT_SECRET = os.environ.get("JWT_SECRET", "dev-secret")
+JWT_ALGO = "HS256"
+JWT_EXP_HOURS = 24 * 7  # 1 week
 
-# Create the main app without a prefix
+client = AsyncIOMotorClient(MONGO_URL)
+db = client[DB_NAME]
+content_col = db.site_content
+CONTENT_ID = "default"
+
 app = FastAPI()
+api = APIRouter(prefix="/api")
+security = HTTPBearer(auto_error=False)
 
-# Create a router with the /api prefix
-api_router = APIRouter(prefix="/api")
+# ---------- Models ----------
+class LoginIn(BaseModel):
+    username: str
+    password: str
+
+class TokenOut(BaseModel):
+    token: str
+    expires_in: int
+
+class MetaItem(BaseModel):
+    k: str
+    v: str
+
+class HeroData(BaseModel):
+    name: str
+    role: str
+    headlineLine1: str
+    headlineLine2: str
+    headlineLine3: str
+    headlineLine4: str
+    status: str
+
+class AboutData(BaseModel):
+    bio: List[str]
+    meta: List[MetaItem]
+    terminalLines: List[str]
+
+class ProjectData(BaseModel):
+    id: int
+    index: str
+    title: str
+    subtitle: str
+    year: str
+    role: str
+    tags: List[str]
+    image: str
+    description: str
+
+class SocialItem(BaseModel):
+    label: str
+    handle: str
+    href: str
+
+class ContactData(BaseModel):
+    primary: str
+    primaryLabel: str
+    caption: str
+    copyright: str
+
+class SiteContent(BaseModel):
+    hero: HeroData
+    about: AboutData
+    projects: List[ProjectData]
+    skillsRow1: List[str]
+    skillsRow2: List[str]
+    skillsRow3: List[str]
+    socials: List[SocialItem]
+    contact: ContactData
+
+# ---------- Defaults (French / Roblox / Luau / Figma) ----------
+DEFAULT_CONTENT = {
+    "hero": {
+        "name": "Censure",
+        "role": "UI Designer & Scripter Roblox",
+        "headlineLine1": "Designer",
+        "headlineLine2": "l'interface.",
+        "headlineLine3": "Scripter",
+        "headlineLine4": "l'expérience.",
+        "status": "Disponible pour collaborations sélectionnées — 2025",
+    },
+    "about": {
+        "bio": [
+            "Je suis Censure — développeur Roblox Studio et UI Designer indépendant.",
+            "Je conçois mes interfaces dans Figma, puis je leur donne vie sur Roblox avec Luau — menus, HUD, systèmes de lobby, animations, tout ce qui rend un jeu vivant.",
+            "Je travaille à la couture du design et du gameplay : ce qui est beau doit être jouable, ce qui est jouable doit être beau.",
+        ],
+        "meta": [
+            {"k": "Basé", "v": "Roblox / À distance"},
+            {"k": "Focus", "v": "UI Roblox · Luau · Figma"},
+            {"k": "Années", "v": "07"},
+        ],
+        "terminalLines": [
+            "$ whoami",
+            "censure — développeur roblox & ui designer",
+            "$ stack --core",
+            "luau · roblox studio · roact",
+            "$ stack --design",
+            "figma",
+            "$ philosophie",
+            '"le détail, c\'est la dévotion."',
+            "$ statut",
+            "j'accepte 2 projets ce trimestre ▍",
+        ],
+    },
+    "projects": [
+        {
+            "id": 1, "index": "01", "title": "Apex Lobby",
+            "subtitle": "Système de lobby compétitif",
+            "year": "2025", "role": "UI · Luau",
+            "tags": ["Roblox", "UI", "Luau"],
+            "image": "https://images.unsplash.com/photo-1700665654047-1c11a46efd6b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHw0fHxVSSUyMGRlc2lnbnxlbnwwfHx8YmxhY2t8MTc3NzY3NTE3MXww&ixlib=rb-4.1.0&q=85",
+            "description": "Un lobby modulaire pour un jeu PvP : matchmaking, classements, vitrine de skins. Pensé dans Figma, scripé en Luau.",
+        },
+        {
+            "id": 2, "index": "02", "title": "Null Sector",
+            "subtitle": "Identité visuelle d'un univers SF",
+            "year": "2024", "role": "Direction artistique",
+            "tags": ["Roblox", "Brand", "World"],
+            "image": "https://images.unsplash.com/photo-1632059368252-be6d65abc4e2?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzF8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMDNEfGVufDB8fHxibGFja3wxNzc3Njc1MTcxfDA&ixlib=rb-4.1.0&q=85",
+            "description": "Identité graphique complète d'un univers Roblox : logo, HUD, typographies in-game, gabarits Figma exportés en assets.",
+        },
+        {
+            "id": 3, "index": "03", "title": "Halcyon",
+            "subtitle": "HUD apaisant pour jeu d'exploration",
+            "year": "2024", "role": "UI · Prototypage",
+            "tags": ["Roblox", "HUD", "Mobile"],
+            "image": "https://images.unsplash.com/photo-1703944159188-ab7298c6d793?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzF8MHwxfHNlYXJjaHw0fHxtb2JpbGUlMjBhcHAlMjBkYXJrfGVufDB8fHxibGFja3wxNzc3Njc1MTY1fDA&ixlib=rb-4.1.0&q=85",
+            "description": "Un HUD minimal sans surcharge : transitions calées sur la respiration, palette sombre, lisible sur mobile.",
+        },
+        {
+            "id": 4, "index": "04", "title": "Monolith",
+            "subtitle": "Intro narrative typographique",
+            "year": "2023", "role": "Motion · Luau",
+            "tags": ["Roblox", "Motion", "Type"],
+            "image": "https://images.unsplash.com/photo-1649015931204-15a3c789e6ea?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzF8MHwxfHNlYXJjaHw0fHxicnV0YWxpc3QlMjB0eXBvZ3JhcGh5fGVufDB8fHxibGFja3wxNzc3Njc1MTY1fDA&ixlib=rb-4.1.0&q=85",
+            "description": "Une intro brutaliste pour un jeu narratif Roblox : typographie massive, TweenService calé à la frame.",
+        },
+    ],
+    "skillsRow1": ["Design d'interface", "Motion", "Luau", "Roblox Studio", "Systèmes UI", "Prototypage"],
+    "skillsRow2": ["Typographie", "TweenService", "Roact", "Figma", "Animation", "Direction artistique"],
+    "skillsRow3": ["UX Produit", "Systèmes de marque", "Game Design", "Narration", "Front-end"],
+    "socials": [
+        {"label": "Discord", "handle": "cen_sure", "href": "#"},
+        {"label": "Roblox", "handle": "censure", "href": "#"},
+        {"label": "X / Twitter", "handle": "@censure", "href": "#"},
+        {"label": "Figma", "handle": "censure", "href": "#"},
+    ],
+    "contact": {
+        "primary": "cen_sure",
+        "primaryLabel": "Discord",
+        "caption": "Un projet ? Écris-moi en DM. Je lis tout.",
+        "copyright": "© 2025 Censure — Chaque pixel est intentionnel.",
+    },
+}
+
+# ---------- Helpers ----------
+def _make_token(username: str) -> str:
+    payload = {
+        "sub": username,
+        "exp": datetime.utcnow() + timedelta(hours=JWT_EXP_HOURS),
+        "iat": datetime.utcnow(),
+    }
+    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGO)
 
 
-# Define Models
-class StatusCheck(BaseModel):
-    model_config = ConfigDict(extra="ignore")  # Ignore MongoDB's _id field
-    
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+def require_admin(creds: Optional[HTTPAuthorizationCredentials] = Depends(security)) -> str:
+    if not creds or not creds.credentials:
+        raise HTTPException(status_code=401, detail="Authentification requise")
+    try:
+        payload = jwt.decode(creds.credentials, JWT_SECRET, algorithms=[JWT_ALGO])
+        return payload["sub"]
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expiré")
+    except Exception:
+        raise HTTPException(status_code=401, detail="Token invalide")
 
-class StatusCheckCreate(BaseModel):
-    client_name: str
 
-# Add your routes to the router instead of directly to app
-@api_router.get("/")
+async def _get_or_seed_content() -> dict:
+    doc = await content_col.find_one({"_id": CONTENT_ID})
+    if not doc:
+        await content_col.insert_one({"_id": CONTENT_ID, **DEFAULT_CONTENT})
+        doc = await content_col.find_one({"_id": CONTENT_ID})
+    doc.pop("_id", None)
+    return doc
+
+# ---------- Routes ----------
+@api.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Censure portfolio API"}
 
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.model_dump()
-    status_obj = StatusCheck(**status_dict)
-    
-    # Convert to dict and serialize datetime to ISO string for MongoDB
-    doc = status_obj.model_dump()
-    doc['timestamp'] = doc['timestamp'].isoformat()
-    
-    _ = await db.status_checks.insert_one(doc)
-    return status_obj
+@api.post("/auth/login", response_model=TokenOut)
+async def login(body: LoginIn):
+    if body.username != ADMIN_USERNAME or body.password != ADMIN_PASSWORD:
+        raise HTTPException(status_code=401, detail="Identifiants incorrects")
+    token = _make_token(body.username)
+    return TokenOut(token=token, expires_in=JWT_EXP_HOURS * 3600)
 
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    # Exclude MongoDB's _id field from the query results
-    status_checks = await db.status_checks.find({}, {"_id": 0}).to_list(1000)
-    
-    # Convert ISO string timestamps back to datetime objects
-    for check in status_checks:
-        if isinstance(check['timestamp'], str):
-            check['timestamp'] = datetime.fromisoformat(check['timestamp'])
-    
-    return status_checks
+@api.get("/auth/me")
+async def me(user: str = Depends(require_admin)):
+    return {"username": user}
 
-# Include the router in the main app
-app.include_router(api_router)
+@api.get("/content")
+async def get_content():
+    return await _get_or_seed_content()
+
+@api.put("/content")
+async def update_content(body: SiteContent, user: str = Depends(require_admin)):
+    data = body.model_dump()
+    await content_col.update_one(
+        {"_id": CONTENT_ID},
+        {"$set": data},
+        upsert=True,
+    )
+    doc = await content_col.find_one({"_id": CONTENT_ID})
+    doc.pop("_id", None)
+    return doc
+
+@api.post("/content/reset")
+async def reset_content(user: str = Depends(require_admin)):
+    await content_col.update_one(
+        {"_id": CONTENT_ID},
+        {"$set": DEFAULT_CONTENT},
+        upsert=True,
+    )
+    doc = await content_col.find_one({"_id": CONTENT_ID})
+    doc.pop("_id", None)
+    return doc
+
+app.include_router(api)
 
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 @app.on_event("shutdown")

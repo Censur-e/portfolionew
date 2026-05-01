@@ -1,32 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { MagneticLink } from "./CustomCursor";
+import { NAV_LABELS } from "../../mock";
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [time, setTime] = useState("");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
     window.addEventListener("scroll", onScroll);
-    const updateTime = () => {
-      const d = new Date();
-      const opts = { hour: "2-digit", minute: "2-digit", hour12: false };
-      setTime(d.toLocaleTimeString("en-GB", opts) + " UTC");
-    };
-    updateTime();
-    const t = setInterval(updateTime, 30000);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      clearInterval(t);
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const links = [
-    { label: "Index", href: "#hero" },
-    { label: "About", href: "#about" },
-    { label: "Work", href: "#work" },
-    { label: "Contact", href: "#contact" },
+    { label: NAV_LABELS.home, href: "#hero" },
+    { label: NAV_LABELS.about, href: "#about" },
+    { label: NAV_LABELS.work, href: "#work" },
+    { label: NAV_LABELS.contact, href: "#contact" },
   ];
 
   return (
@@ -36,7 +26,11 @@ const Header = () => {
       }`}
     >
       <div className="mx-auto max-w-[1640px] px-6 md:px-10 flex items-center justify-between">
-        <MagneticLink href="#hero" strength={0.25} className="font-display text-white text-xl md:text-2xl font-semibold tracking-tight">
+        <MagneticLink
+          href="#hero"
+          strength={0.25}
+          className="font-display text-white text-xl md:text-2xl font-semibold tracking-tight"
+        >
           <span className="inline-flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-white" />
             Censure
@@ -57,8 +51,8 @@ const Header = () => {
         </nav>
 
         <div className="hidden md:flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">
-          <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-          <span>Online — {time}</span>
+          <span className="w-2 h-2 rounded-full bg-white" />
+          <span>Vol. 07</span>
         </div>
       </div>
     </header>
