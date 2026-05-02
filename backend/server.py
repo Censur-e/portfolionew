@@ -14,10 +14,10 @@ import logging
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
 
-# Detect if running on Vercel (or other prod env) to prevent silent fallback to localhost
+# Detect if running on Vercel (or other prod env)
 IS_VERCEL = bool(os.environ.get("VERCEL"))
 
-MONGO_URL = os.environ.get("MONGO_URL", "")
+MONGO_URL = os.environ.get("MONGO_URL", "") or "mongodb://localhost:27017"
 DB_NAME = os.environ.get("DB_NAME", "censure_portfolio")
 ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "CensureSiteWeb")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "14621462aBaB")
@@ -25,17 +25,9 @@ JWT_SECRET = os.environ.get("JWT_SECRET", "dev-secret")
 JWT_ALGO = "HS256"
 JWT_EXP_HOURS = 24 * 7  # 1 week
 
-# Fail loud and clear if running on Vercel without a proper Atlas URL
-if IS_VERCEL and ("localhost" in MONGO_URL or "127.0.0.1" in MONGO_URL or not MONGO_URL):
-    raise RuntimeError(
-        "MONGO_URL is missing or points to localhost on Vercel. "
-        "Set MONGO_URL in Vercel project Environment Variables "
-        "to your MongoDB Atlas connection string (mongodb+srv://...)."
-    )
+MONGO_URL_IS_BAD_FOR_PROD = IS_VERCEL and ("localhost" in MONGO_URL or "127.0.0.1" in MONGO_URL)
 
-if not MONGO_URL:
-    MONGO_URL = "mongodb://localhost:27017"
-
+# Build client lazily — never fail at import time so /_health always responds
 client = AsyncIOMotorClient(MONGO_URL, serverSelectionTimeoutMS=8000)
 db = client[DB_NAME]
 content_col = db.site_content
@@ -258,7 +250,23 @@ async def me(user: str = Depends(require_admin)):
 
 @api.get("/content")
 async def get_content():
-    return await _get_or_seed_content()
+    if MONGO_URL_IS_BAD_FOR_PROD:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "MONGO_URL on Vercel still points to localhost. "
+                "Set MONGO_URL in Vercel Settings → Environment Variables "
+                "to your MongoDB Atlas connection string (mongodb+srv://...) "
+                "and redeploy."
+            ),
+        )
+    try:
+        return await _get_or_seed_content()
+    except Exception as e:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Database error: {type(e).__name__}: {str(e)[:300]}",
+        )
 
 @api.put("/content")
 async def update_content(body: SiteContent, user: str = Depends(require_admin)):
