@@ -14,15 +14,29 @@ import logging
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
 
-MONGO_URL = os.environ["MONGO_URL"]
-DB_NAME = os.environ["DB_NAME"]
+# Detect if running on Vercel (or other prod env) to prevent silent fallback to localhost
+IS_VERCEL = bool(os.environ.get("VERCEL"))
+
+MONGO_URL = os.environ.get("MONGO_URL", "")
+DB_NAME = os.environ.get("DB_NAME", "censure_portfolio")
 ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "CensureSiteWeb")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "14621462aBaB")
 JWT_SECRET = os.environ.get("JWT_SECRET", "dev-secret")
 JWT_ALGO = "HS256"
 JWT_EXP_HOURS = 24 * 7  # 1 week
 
-client = AsyncIOMotorClient(MONGO_URL)
+# Fail loud and clear if running on Vercel without a proper Atlas URL
+if IS_VERCEL and ("localhost" in MONGO_URL or "127.0.0.1" in MONGO_URL or not MONGO_URL):
+    raise RuntimeError(
+        "MONGO_URL is missing or points to localhost on Vercel. "
+        "Set MONGO_URL in Vercel project Environment Variables "
+        "to your MongoDB Atlas connection string (mongodb+srv://...)."
+    )
+
+if not MONGO_URL:
+    MONGO_URL = "mongodb://localhost:27017"
+
+client = AsyncIOMotorClient(MONGO_URL, serverSelectionTimeoutMS=8000)
 db = client[DB_NAME]
 content_col = db.site_content
 CONTENT_ID = "default"
@@ -210,6 +224,26 @@ async def _get_or_seed_content() -> dict:
 @api.get("/")
 async def root():
     return {"message": "Censure portfolio API"}
+
+@api.get("/_health")
+async def health():
+    """Diagnostic endpoint — shows env config (without secrets) and DB connectivity."""
+    mongo_prefix = MONGO_URL.split("@")[-1].split("/")[0] if "@" in MONGO_URL else MONGO_URL
+    info = {
+        "is_vercel": IS_VERCEL,
+        "mongo_host": mongo_prefix,
+        "mongo_scheme": MONGO_URL.split("://")[0] if "://" in MONGO_URL else "?",
+        "db_name": DB_NAME,
+        "admin_user_set": bool(ADMIN_USERNAME),
+        "jwt_secret_set": JWT_SECRET != "dev-secret",
+    }
+    try:
+        await db.command("ping")
+        info["db_status"] = "ok"
+    except Exception as e:
+        info["db_status"] = "error"
+        info["db_error"] = str(e)[:300]
+    return info
 
 @api.post("/auth/login", response_model=TokenOut)
 async def login(body: LoginIn):
