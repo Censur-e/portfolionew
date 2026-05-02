@@ -1,6 +1,11 @@
 import axios from "axios";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+// Support both CRA-style and Vite-style env vars for backward compat
+const BACKEND_URL =
+  (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.REACT_APP_BACKEND_URL) ||
+  (typeof process !== "undefined" && process.env && process.env.REACT_APP_BACKEND_URL) ||
+  "";
+
 const API = `${BACKEND_URL}/api`;
 
 export const apiClient = axios.create({ baseURL: API });
