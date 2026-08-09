@@ -43,6 +43,7 @@ export const DEFAULT_CONTENT = {
       tags: ["Roblox", "UI", "Luau"],
       image: "https://images.unsplash.com/photo-1700665654047-1c11a46efd6b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHw0fHxVSSUyMGRlc2lnbnxlbnwwfHx8YmxhY2t8MTc3NzY3NTE3MXww&ixlib=rb-4.1.0&q=85",
       description: "Un lobby modulaire pour un jeu PvP : matchmaking, classements, vitrine de skins. Pensé dans Figma, scripé en Luau.",
+      category: "created", mediaType: "image",
     },
     {
       id: 2, index: "02", title: "Null Sector",
@@ -51,6 +52,7 @@ export const DEFAULT_CONTENT = {
       tags: ["Roblox", "Brand", "World"],
       image: "https://images.unsplash.com/photo-1632059368252-be6d65abc4e2?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzF8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMDNEfGVufDB8fHxibGFja3wxNzc3Njc1MTcxfDA&ixlib=rb-4.1.0&q=85",
       description: "Identité graphique complète d'un univers Roblox : logo, HUD, typographies in-game, gabarits Figma exportés en assets.",
+      category: "created", mediaType: "image",
     },
     {
       id: 3, index: "03", title: "Halcyon",
@@ -59,6 +61,7 @@ export const DEFAULT_CONTENT = {
       tags: ["Roblox", "HUD", "Mobile"],
       image: "https://images.unsplash.com/photo-1703944159188-ab7298c6d793?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzF8MHwxfHNlYXJjaHw0fHxtb2JpbGUlMjBhcHAlMjBkYXJrfGVufDB8fHxibGFja3wxNzc3Njc1MTY1fDA&ixlib=rb-4.1.0&q=85",
       description: "Un HUD minimal sans surcharge : transitions calées sur la respiration, palette sombre, lisible sur mobile.",
+      category: "created", mediaType: "image",
     },
     {
       id: 4, index: "04", title: "Monolith",
@@ -67,6 +70,7 @@ export const DEFAULT_CONTENT = {
       tags: ["Roblox", "Motion", "Type"],
       image: "https://images.unsplash.com/photo-1649015931204-15a3c789e6ea?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzF8MHwxfHNlYXJjaHw0fHxicnV0YWxpc3QlMjB0eXBvZ3JhcGh5fGVufDB8fHxibGFja3wxNzc3Njc1MTY1fDA&ixlib=rb-4.1.0&q=85",
       description: "Une intro brutaliste pour un jeu narratif Roblox : typographie massive, TweenService calé à la frame.",
+      category: "created", mediaType: "image",
     },
   ],
   skillsRow1: ["Design d'interface", "Motion", "Luau", "Roblox Studio", "Systèmes UI", "Prototypage"],

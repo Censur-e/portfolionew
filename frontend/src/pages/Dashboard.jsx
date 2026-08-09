@@ -211,7 +211,7 @@ const Editor = ({ onLogout }) => {
     update("projects", next);
   };
 
-  const addProject = () => {
+  const addProject = (category = "created") => {
     const newId = (content.projects[content.projects.length - 1]?.id || 0) + 1;
     update("projects", [
       ...content.projects,
@@ -225,6 +225,8 @@ const Editor = ({ onLogout }) => {
         tags: [],
         image: "",
         description: "",
+        category,
+        mediaType: "image",
       },
     ]);
   };
@@ -323,30 +325,92 @@ const Editor = ({ onLogout }) => {
           </TabsContent>
 
           <TabsContent value="projects" className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="font-display text-2xl font-semibold">Projets</h2>
-              <Button onClick={addProject} className="bg-white text-black hover:bg-white/90"><Plus className="w-4 h-4 mr-2" /> Nouveau projet</Button>
-            </div>
-            {content.projects.map((p, i) => (
-              <div key={p.id} className="rounded-2xl border border-white/10 p-5 space-y-4 bg-white/[0.02]">
-                <div className="flex items-center justify-between">
-                  <div className="font-display text-xl">{p.index} — {p.title}</div>
-                  <Button variant="outline" onClick={() => removeProject(i)} className="border-white/20 text-white hover:bg-white hover:text-black">
-                    <Trash2 className="w-4 h-4 mr-2" /> Supprimer
-                  </Button>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Field label="Index (ex: 01)" value={p.index} onChange={(v) => updateProject(i, "index", v)} />
-                  <Field label="Année" value={p.year} onChange={(v) => updateProject(i, "year", v)} />
-                  <Field label="Titre" value={p.title} onChange={(v) => updateProject(i, "title", v)} />
-                  <Field label="Sous-titre" value={p.subtitle} onChange={(v) => updateProject(i, "subtitle", v)} />
-                  <Field label="Rôle" value={p.role} onChange={(v) => updateProject(i, "role", v)} />
-                  <Field label="URL de l'image" value={p.image} onChange={(v) => updateProject(i, "image", v)} />
-                </div>
-                <Field label="Description" value={p.description} onChange={(v) => updateProject(i, "description", v)} textarea />
-                <ListEditor label="Tags" items={p.tags} onChange={(v) => updateProject(i, "tags", v)} placeholder="ex: Roblox" />
+              <div className="flex gap-2">
+                <Button onClick={() => addProject("created")} className="bg-white text-black hover:bg-white/90">
+                  <Plus className="w-4 h-4 mr-2" /> Nouvelle création
+                </Button>
+                <Button onClick={() => addProject("collab")} variant="outline" className="border-white/20 text-white hover:bg-white hover:text-black">
+                  <Plus className="w-4 h-4 mr-2" /> Nouvelle collab
+                </Button>
               </div>
-            ))}
+            </div>
+            <p className="text-white/50 text-sm">
+              Les projets sont regroupés sur le site en 2 onglets : <b>Mes créations</b> & <b>Collaborations</b>. Choisis la catégorie et le type de média (image, vidéo directe MP4 ou lien YouTube/Vimeo) pour chacun.
+            </p>
+            {content.projects.map((p, i) => {
+              const cat = p.category || "created";
+              const mtype = p.mediaType || "image";
+              const mediaLabel = mtype === "video" ? "URL de la vidéo (.mp4)" : mtype === "embed" ? "Lien YouTube / Vimeo" : "URL de l'image";
+              return (
+                <div key={p.id} className="rounded-2xl border border-white/10 p-5 space-y-4 bg-white/[0.02]">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="font-display text-xl">{p.index} — {p.title}</div>
+                      <span className={`font-mono text-[10px] uppercase tracking-[0.2em] px-2 py-1 rounded-full ${cat === "collab" ? "bg-white/10 text-white/70" : "bg-white text-black"}`}>
+                        {cat === "collab" ? "Collaboration" : "Création"}
+                      </span>
+                    </div>
+                    <Button variant="outline" onClick={() => removeProject(i)} className="border-white/20 text-white hover:bg-white hover:text-black">
+                      <Trash2 className="w-4 h-4 mr-2" /> Supprimer
+                    </Button>
+                  </div>
+
+                  {/* Category + MediaType selectors */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-white/60 text-[11px] uppercase tracking-[0.2em]">Catégorie</Label>
+                      <div className="mt-2 inline-flex rounded-lg border border-white/15 p-1 bg-black/40">
+                        {[
+                          { k: "created", label: "Ma création" },
+                          { k: "collab", label: "Collaboration" },
+                        ].map((c) => (
+                          <button
+                            key={c.k}
+                            type="button"
+                            onClick={() => updateProject(i, "category", c.k)}
+                            className={`px-3 py-1.5 text-sm rounded-md transition-colors ${cat === c.k ? "bg-white text-black" : "text-white/70 hover:text-white"}`}
+                          >
+                            {c.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-white/60 text-[11px] uppercase tracking-[0.2em]">Type de média</Label>
+                      <div className="mt-2 inline-flex rounded-lg border border-white/15 p-1 bg-black/40">
+                        {[
+                          { k: "image", label: "Image" },
+                          { k: "video", label: "Vidéo (MP4)" },
+                          { k: "embed", label: "YouTube / Vimeo" },
+                        ].map((c) => (
+                          <button
+                            key={c.k}
+                            type="button"
+                            onClick={() => updateProject(i, "mediaType", c.k)}
+                            className={`px-3 py-1.5 text-sm rounded-md transition-colors ${mtype === c.k ? "bg-white text-black" : "text-white/70 hover:text-white"}`}
+                          >
+                            {c.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Field label="Index (ex: 01)" value={p.index} onChange={(v) => updateProject(i, "index", v)} />
+                    <Field label="Année" value={p.year} onChange={(v) => updateProject(i, "year", v)} />
+                    <Field label="Titre" value={p.title} onChange={(v) => updateProject(i, "title", v)} />
+                    <Field label="Sous-titre" value={p.subtitle} onChange={(v) => updateProject(i, "subtitle", v)} />
+                    <Field label="Rôle" value={p.role} onChange={(v) => updateProject(i, "role", v)} />
+                    <Field label={mediaLabel} value={p.image} onChange={(v) => updateProject(i, "image", v)} />
+                  </div>
+                  <Field label="Description" value={p.description} onChange={(v) => updateProject(i, "description", v)} textarea />
+                  <ListEditor label="Tags" items={p.tags} onChange={(v) => updateProject(i, "tags", v)} placeholder="ex: Roblox" />
+                </div>
+              );
+            })}
           </TabsContent>
 
           <TabsContent value="skills" className="space-y-5">
