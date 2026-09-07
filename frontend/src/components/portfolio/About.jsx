@@ -50,7 +50,9 @@ const About = () => {
             <div className="glass rounded-2xl p-8 md:p-12 relative overflow-hidden">
               <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-white/[0.04] blur-3xl pointer-events-none" />
               <h2 className="font-display text-white text-4xl md:text-6xl font-semibold leading-[0.95] tracking-[-0.03em]">
-                {translations.aboutTitle}
+                {translations.aboutTitleBefore}
+                <span className="text-outline">{translations.aboutTitleEmphasis}</span>
+                {translations.aboutTitleAfter}
               </h2>
               <div className="mt-8 space-y-5 max-w-2xl">
                 {about.bio.map((p, i) => (
