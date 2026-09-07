@@ -295,6 +295,7 @@ const Editor = ({ onLogout }) => {
 
           <TabsContent value="about" className="space-y-5">
             <h2 className="font-display text-2xl font-semibold mb-2">Section À propos</h2>
+            <Field label="Études actuelles" value={content.about.study} onChange={(v) => update("about.study", v)} />
             <ListEditor label="Bio (un paragraphe par ligne)" items={content.about.bio} onChange={(v) => update("about.bio", v)} />
             <div>
               <Label className="text-white/60 text-[11px] uppercase tracking-[0.2em]">Méta (clé / valeur)</Label>

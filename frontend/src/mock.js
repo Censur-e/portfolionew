@@ -22,6 +22,7 @@ export const DEFAULT_CONTENT = {
       { k: "Focus", v: "UI Roblox · Luau · Figma" },
       { k: "Années", v: "07" },
     ],
+    study: "Réseau et Télécommunicationé",
     terminalLines: [
       "$ whoami",
       "censure — développeur roblox & ui designer",

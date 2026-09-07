@@ -25,7 +25,7 @@ Stored in MongoDB `site_content` collection, single doc with `_id="default"`.
 ```
 {
   hero: { name, role, headlineLine1, headlineLine2, headlineLine3, headlineLine4, status },
-  about: { bio: [str], meta: [{k, v}], terminalLines: [str] },
+  about: { bio: [str], meta: [{k, v}], terminalLines: [str], study: str },
   projects: [ { id, index, title, subtitle, year, role, tags: [str], image, description } ],
   skillsRow1: [str], skillsRow2: [str], skillsRow3: [str],
   socials: [ { label, handle, href } ],

@@ -67,6 +67,10 @@ const About = () => {
                   </div>
                 ))}
               </div>
+              <div className="mt-8 border-t border-white/10 pt-6">
+                <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/40">Études actuelles</div>
+                <div className="mt-2 text-white text-sm md:text-base">{about.study}</div>
+              </div>
             </div>
           </div>
 

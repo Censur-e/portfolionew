@@ -63,6 +63,7 @@ class AboutData(BaseModel):
     bio: List[str]
     meta: List[MetaItem]
     terminalLines: List[str]
+    study: str = "Réseau et Télécommunicationé"
 
 class ProjectData(BaseModel):
     id: int
@@ -120,6 +121,7 @@ DEFAULT_CONTENT = {
             {"k": "Focus", "v": "UI Roblox · Luau · Figma"},
             {"k": "Années", "v": "07"},
         ],
+        "study": "Réseau et Télécommunicationé",
         "terminalLines": [
             "$ whoami",
             "censure — développeur roblox & ui designer",
@@ -238,6 +240,8 @@ async def _get_or_seed_content() -> dict:
     for p in doc.get("projects", []):
         p.setdefault("category", "created")
         p.setdefault("mediaType", "image")
+    doc.setdefault("about", {})
+    doc["about"].setdefault("study", DEFAULT_CONTENT["about"]["study"])
     return doc
 
 # ---------- Routes ----------
