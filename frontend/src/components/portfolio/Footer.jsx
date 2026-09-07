@@ -3,7 +3,7 @@ import { Copy, Check } from "lucide-react";
 import { SiteContext } from "./Portfolio";
 
 const Footer = () => {
-  const { contact, socials } = useContext(SiteContext);
+  const { contact, socials, translations } = useContext(SiteContext);
   const [copied, setCopied] = useState(false);
   const [time, setTime] = useState("");
 
@@ -39,21 +39,21 @@ const Footer = () => {
       <div className="mx-auto max-w-[1640px] px-6 md:px-10">
         <div className="flex items-center gap-4 font-mono text-[11px] uppercase tracking-[0.25em] text-white/50 mb-10">
           <span className="w-8 h-px bg-white/40" />
-          (04) Contact
+          {translations.contactEyebrow}
         </div>
-        <p className="max-w-2xl text-white/60 text-base md:text-lg">{contact.caption}</p>
+        <p className="max-w-2xl text-white/60 text-base md:text-lg">{translations.contactCaption}</p>
       </div>
 
       <button
         onClick={copyHandle}
         data-cursor="hover"
         className="group block w-full text-left mt-12 md:mt-16 px-6 md:px-10 py-10 md:py-16 border-y border-white/10 hover:bg-white hover:text-black transition-colors duration-500"
-        aria-label="Copier le pseudo Discord"
+        aria-label={translations.copy}
       >
         <div className="flex items-start justify-between gap-6 max-w-[1640px] mx-auto">
           <div>
             <div className="font-mono text-[11px] uppercase tracking-[0.25em] opacity-60 mb-3">
-              {contact.primaryLabel} — clique pour copier
+              {contact.primaryLabel} — {translations.copyHint}
             </div>
             <div className="font-display font-semibold tracking-[-0.05em] leading-[0.85] text-[14vw] md:text-[12vw] lg:text-[10.5vw] break-all">
               {contact.primary}
@@ -62,11 +62,11 @@ const Footer = () => {
           <div className="shrink-0 mt-4 hidden md:flex items-center gap-2 font-mono text-xs uppercase tracking-[0.25em] opacity-70">
             {copied ? (
               <>
-                <Check className="w-4 h-4" strokeWidth={1.5} /> Copié
+                <Check className="w-4 h-4" strokeWidth={1.5} /> {translations.copied}
               </>
             ) : (
               <>
-                <Copy className="w-4 h-4" strokeWidth={1.5} /> Copier
+                <Copy className="w-4 h-4" strokeWidth={1.5} /> {translations.copy}
               </>
             )}
           </div>
@@ -94,7 +94,7 @@ const Footer = () => {
 
       <div className="mx-auto max-w-[1640px] px-6 md:px-10 mt-16 flex flex-wrap items-center justify-between gap-4">
         <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/40">{contact.copyright}</div>
-        <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/40">Heure locale — {time}</div>
+        <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/40">{translations.localTime} — {time}</div>
       </div>
     </footer>
   );

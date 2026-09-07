@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { MagneticLink } from "./CustomCursor";
-import { NAV_LABELS } from "../../mock";
+import { SiteContext } from "./Portfolio";
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
+  const { translations, language, changeLanguage } = React.useContext(SiteContext);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -13,10 +14,10 @@ const Header = () => {
   }, []);
 
   const links = [
-    { label: NAV_LABELS.home, href: "#hero" },
-    { label: NAV_LABELS.about, href: "#about" },
-    { label: NAV_LABELS.work, href: "#work" },
-    { label: NAV_LABELS.contact, href: "#contact" },
+    { label: translations.nav.home, href: "#hero" },
+    { label: translations.nav.about, href: "#about" },
+    { label: translations.nav.work, href: "#work" },
+    { label: translations.nav.contact, href: "#contact" },
   ];
 
   return (
@@ -50,9 +51,22 @@ const Header = () => {
           ))}
         </nav>
 
-        <div className="hidden md:flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">
+        <div className="flex items-center gap-4 font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">
           <span className="w-2 h-2 rounded-full bg-white" />
-          <span>Vol. 07</span>
+          <span>{translations.volume}</span>
+          <div className="flex items-center gap-1 border border-white/15 rounded-full p-1" aria-label="Language selector">
+            {["fr", "en"].map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => changeLanguage(option)}
+                className={`px-2 py-1 rounded-full transition-colors ${language === option ? "bg-white text-black" : "hover:text-white"}`}
+                aria-pressed={language === option}
+              >
+                {option.toUpperCase()}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </header>

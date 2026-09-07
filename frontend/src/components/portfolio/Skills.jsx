@@ -23,13 +23,13 @@ const Row = ({ items, animClass, outline = false }) => {
 };
 
 const Skills = () => {
-  const { skillsRow1, skillsRow2, skillsRow3 } = useContext(SiteContext);
+  const { skillsRow1, skillsRow2, skillsRow3, translations } = useContext(SiteContext);
   return (
     <section id="skills" className="relative w-full py-28 md:py-40">
       <div className="mx-auto max-w-[1640px] px-6 md:px-10">
         <div className="flex items-center gap-4 font-mono text-[11px] uppercase tracking-[0.25em] text-white/50 mb-10">
           <span className="w-8 h-px bg-white/40" />
-          (03) Expertise
+          {translations.skillsEyebrow}
         </div>
       </div>
 

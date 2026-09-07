@@ -6,7 +6,7 @@ import About from "./About";
 import Projects from "./Projects";
 import Skills from "./Skills";
 import Footer from "./Footer";
-import { DEFAULT_CONTENT } from "../../mock";
+import { DEFAULT_CONTENT, UI_TRANSLATIONS } from "../../mock";
 import { contentApi } from "../../lib/api";
 
 export const SiteContext = React.createContext(DEFAULT_CONTENT);
@@ -14,6 +14,12 @@ export const SiteContext = React.createContext(DEFAULT_CONTENT);
 const Portfolio = () => {
   const [content, setContent] = React.useState(DEFAULT_CONTENT);
   const [loaded, setLoaded] = React.useState(false);
+  const [language, setLanguage] = React.useState(() => localStorage.getItem("censure_language") || "fr");
+
+  const changeLanguage = (nextLanguage) => {
+    setLanguage(nextLanguage);
+    localStorage.setItem("censure_language", nextLanguage);
+  };
 
   React.useEffect(() => {
     let mounted = true;
@@ -67,7 +73,7 @@ const Portfolio = () => {
   }, []);
 
   return (
-    <SiteContext.Provider value={content}>
+    <SiteContext.Provider value={{ ...content, language, translations: UI_TRANSLATIONS[language], changeLanguage }}>
       <main className="relative bg-[#050505] text-white">
         <CustomCursor />
         <Header />

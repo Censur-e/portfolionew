@@ -66,7 +66,7 @@ const ProjectMedia = ({ project }) => {
 };
 
 const Projects = () => {
-  const { projects } = useContext(SiteContext);
+  const { projects, translations } = useContext(SiteContext);
   const scrollerRef = useRef(null);
   const [category, setCategory] = useState("created");
 
@@ -84,8 +84,8 @@ const Projects = () => {
   };
 
   const tabs = [
-    { key: "created", label: "Mes créations" },
-    { key: "collab", label: "Collaborations" },
+    { key: "created", label: translations.createdProjects },
+    { key: "collab", label: translations.collabProjects },
   ];
 
   return (
@@ -95,7 +95,7 @@ const Projects = () => {
           <div>
             <div className="flex items-center gap-4 font-mono text-[11px] uppercase tracking-[0.25em] text-white/50 mb-6">
               <span className="w-8 h-px bg-white/40" />
-              (02) Travaux
+              {translations.projectsEyebrow}
             </div>
             <h2 className="font-display text-white text-5xl md:text-7xl lg:text-[8.5vw] font-semibold leading-[0.9] tracking-[-0.04em]">
               Ce que j&rsquo;ai <br className="hidden md:block" />

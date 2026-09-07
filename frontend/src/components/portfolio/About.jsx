@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { SiteContext } from "./Portfolio";
 
 const About = () => {
-  const { about } = useContext(SiteContext);
+  const { about, translations } = useContext(SiteContext);
   const [printed, setPrinted] = useState([]);
   const [done, setDone] = useState(false);
 
@@ -42,7 +42,7 @@ const About = () => {
       <div className="mx-auto max-w-[1640px] px-6 md:px-10">
         <div className="flex items-center gap-4 font-mono text-[11px] uppercase tracking-[0.25em] text-white/50 mb-12">
           <span className="w-8 h-px bg-white/40" />
-          (01) À propos
+          {translations.aboutEyebrow}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
@@ -50,7 +50,7 @@ const About = () => {
             <div className="glass rounded-2xl p-8 md:p-12 relative overflow-hidden">
               <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-white/[0.04] blur-3xl pointer-events-none" />
               <h2 className="font-display text-white text-4xl md:text-6xl font-semibold leading-[0.95] tracking-[-0.03em]">
-                Une pratique de <span className="text-outline">l'artisanat</span> précis.
+                {translations.aboutTitle}
               </h2>
               <div className="mt-8 space-y-5 max-w-2xl">
                 {about.bio.map((p, i) => (
@@ -68,7 +68,7 @@ const About = () => {
                 ))}
               </div>
               <div className="mt-8 border-t border-white/10 pt-6">
-                <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/40">Études actuelles</div>
+                <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/40">{translations.currentStudy}</div>
                 <div className="mt-2 text-white text-sm md:text-base">{about.study}</div>
               </div>
             </div>
@@ -90,7 +90,7 @@ const About = () => {
                 ))}
                 <span className="caret inline-block w-2 h-4 align-middle bg-white ml-1" aria-hidden="true" />
                 {done && (
-                  <div className="mt-4 text-white/30 text-[11px]">— processus inactif. prêt quand tu l'es.</div>
+                  <div className="mt-4 text-white/30 text-[11px]">{translations.processInactive}</div>
                 )}
               </div>
             </div>

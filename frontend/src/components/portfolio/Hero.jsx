@@ -3,7 +3,7 @@ import { ArrowDown } from "lucide-react";
 import { SiteContext } from "./Portfolio";
 
 const Hero = () => {
-  const { hero } = useContext(SiteContext);
+  const { hero, translations } = useContext(SiteContext);
   const bgRef = useRef(null);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ const Hero = () => {
       <div className="relative z-10 mx-auto max-w-[1640px] px-6 md:px-10 pt-40 md:pt-44 pb-24 min-h-screen flex flex-col justify-between">
         <div className="flex flex-wrap items-start justify-between gap-6 reveal in-view">
           <div className="font-mono text-[11px] uppercase tracking-[0.25em] text-white/50">
-            <div>Portfolio &mdash; Vol. 07</div>
+            <div>{translations.portfolio} &mdash; {translations.volume}</div>
             <div className="mt-1">{hero.role}</div>
           </div>
           <div className="font-mono text-[11px] uppercase tracking-[0.25em] text-white/50 max-w-[280px] text-right">
@@ -58,7 +58,7 @@ const Hero = () => {
 
         <div className="mt-16 flex flex-wrap items-end justify-between gap-10">
           <p className="max-w-md text-white/60 text-sm md:text-base leading-relaxed reveal in-view">
-            Une pratique indépendante à la couture du design et du développement Roblox. Des interfaces pensées dans Figma, scriptées en Luau — le mouvement comme langage, le détail comme dévotion.
+            {translations.heroIntro}
           </p>
 
           <a href="#about" data-cursor="hover" className="relative w-[140px] h-[140px] flex items-center justify-center group">
@@ -67,7 +67,7 @@ const Hero = () => {
                 <path id="ring" d="M 100, 100 m -78, 0 a 78,78 0 1,1 156,0 a 78,78 0 1,1 -156,0" />
               </defs>
               <text className="font-mono fill-white/70" fontSize="12" letterSpacing="6">
-                <textPath href="#ring">DÉFILER — EXPLORER — DÉFILER — EXPLORER — </textPath>
+                <textPath href="#ring">{translations.scroll}{translations.scroll}</textPath>
               </text>
             </svg>
             <span className="w-12 h-12 rounded-full border border-white/30 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-300">
