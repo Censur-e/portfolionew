@@ -98,12 +98,12 @@ const Projects = () => {
               {translations.projectsEyebrow}
             </div>
             <h2 className="font-display text-white text-5xl md:text-7xl lg:text-[8.5vw] font-semibold leading-[0.9] tracking-[-0.04em]">
-              Ce que j&rsquo;ai <br className="hidden md:block" />
-              <span className="text-outline">conçu &amp; lancé.</span>
+              {translations.projectsTitleBefore}<br className="hidden md:block" />
+              <span className="text-outline">{translations.projectsTitleEmphasis}</span>
             </h2>
           </div>
           <p className="max-w-sm text-white/55 text-sm md:text-base">
-            Une sélection de travaux récents — lobbies, HUD, identités, intros narratives. Glisse, scrolle ou swipe.
+            {translations.projectsIntro}
           </p>
         </div>
 
@@ -139,7 +139,7 @@ const Projects = () => {
 
       {filtered.length === 0 ? (
         <div className="mx-auto max-w-[1640px] px-6 md:px-10 mt-12">
-          <p className="text-white/40 text-sm">Aucun projet dans cette catégorie pour le moment.</p>
+          <p className="text-white/40 text-sm">{translations.emptyProjects}</p>
         </div>
       ) : (
         <div
