@@ -15,6 +15,7 @@ const Portfolio = () => {
   const [content, setContent] = React.useState(DEFAULT_CONTENT);
   const [loaded, setLoaded] = React.useState(false);
   const [language, setLanguage] = React.useState(() => localStorage.getItem("censure_language") || "fr");
+  const localizedContent = content.translations?.[language] || content;
 
   const changeLanguage = (nextLanguage) => {
     setLanguage(nextLanguage);
@@ -73,7 +74,7 @@ const Portfolio = () => {
   }, []);
 
   return (
-    <SiteContext.Provider value={{ ...content, language, translations: UI_TRANSLATIONS[language], changeLanguage }}>
+    <SiteContext.Provider value={{ ...localizedContent, language, translations: UI_TRANSLATIONS[language], changeLanguage }}>
       <main className="relative bg-[#050505] text-white">
         <CustomCursor />
         <Header />

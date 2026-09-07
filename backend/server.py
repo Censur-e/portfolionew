@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from datetime import datetime, timedelta
 from pathlib import Path
 import os
@@ -98,6 +98,7 @@ class SiteContent(BaseModel):
     skillsRow3: List[str]
     socials: List[SocialItem]
     contact: ContactData
+    translations: Optional[Dict[str, Any]] = None
 
 # ---------- Defaults (French / Roblox / Luau / Figma) ----------
 DEFAULT_CONTENT = {

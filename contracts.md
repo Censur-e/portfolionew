@@ -29,7 +29,8 @@ Stored in MongoDB `site_content` collection, single doc with `_id="default"`.
   projects: [ { id, index, title, subtitle, year, role, tags: [str], image, description } ],
   skillsRow1: [str], skillsRow2: [str], skillsRow3: [str],
   socials: [ { label, handle, href } ],
-  contact: { primary, primaryLabel, caption, copyright }
+  contact: { primary, primaryLabel, caption, copyright },
+  translations: { fr: SiteContent, en: SiteContent }
 }
 ```
 

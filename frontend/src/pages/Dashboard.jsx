@@ -140,7 +140,8 @@ const ListEditor = ({ label, items, onChange, placeholder = "" }) => (
 );
 
 const Editor = ({ onLogout }) => {
-  const [content, setContent] = useState(null);
+  const [contentByLanguage, setContentByLanguage] = useState(null);
+  const [language, setLanguage] = useState("fr");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
@@ -150,9 +151,18 @@ const Editor = ({ onLogout }) => {
     setLoading(true);
     try {
       const res = await contentApi.get();
-      setContent(res.data || DEFAULT_CONTENT);
+      const rawContent = res.data || DEFAULT_CONTENT;
+      const { translations, ...baseContent } = rawContent;
+      const fallback = JSON.parse(JSON.stringify(baseContent));
+      setContentByLanguage({
+        fr: translations?.fr || fallback,
+        en: translations?.en || JSON.parse(JSON.stringify(fallback)),
+      });
     } catch (e) {
-      setContent(DEFAULT_CONTENT);
+      setContentByLanguage({
+        fr: JSON.parse(JSON.stringify(DEFAULT_CONTENT)),
+        en: JSON.parse(JSON.stringify(DEFAULT_CONTENT)),
+      });
       toast({ title: "Erreur", description: "Impossible de charger le contenu." });
     } finally {
       setLoading(false);
@@ -166,7 +176,7 @@ const Editor = ({ onLogout }) => {
   const save = async () => {
     setSaving(true);
     try {
-      await contentApi.update(content);
+      await contentApi.update({ ...content, translations: contentByLanguage });
       toast({ title: "Sauvegardé", description: "Le site a été mis à jour." });
     } catch (e) {
       toast({ title: "Erreur", description: e?.response?.data?.detail || "Sauvegarde échouée." });
@@ -179,14 +189,20 @@ const Editor = ({ onLogout }) => {
     if (!window.confirm("Réinitialiser tout le contenu aux valeurs par défaut ?")) return;
     try {
       const res = await contentApi.reset();
-      setContent(res.data);
+      const rawContent = res.data || DEFAULT_CONTENT;
+      const { translations, ...baseContent } = rawContent;
+      const fallback = JSON.parse(JSON.stringify(baseContent));
+      setContentByLanguage({
+        fr: translations?.fr || fallback,
+        en: translations?.en || JSON.parse(JSON.stringify(fallback)),
+      });
       toast({ title: "Réinitialisé", description: "Contenu remis aux valeurs par défaut." });
     } catch (e) {
       toast({ title: "Erreur", description: "Réinitialisation échouée." });
     }
   };
 
-  if (loading || !content) {
+  if (loading || !contentByLanguage) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#050505] text-white">
         <Loader2 className="w-6 h-6 animate-spin" />
@@ -194,14 +210,16 @@ const Editor = ({ onLogout }) => {
     );
   }
 
+  const content = contentByLanguage[language];
+
   const update = (path, value) => {
-    setContent((prev) => {
-      const next = JSON.parse(JSON.stringify(prev));
+    setContentByLanguage((prev) => {
+      const next = JSON.parse(JSON.stringify(prev[language]));
       let cur = next;
       const parts = path.split(".");
       for (let i = 0; i < parts.length - 1; i++) cur = cur[parts[i]];
       cur[parts[parts.length - 1]] = value;
-      return next;
+      return { ...prev, [language]: next };
     });
   };
 
@@ -252,6 +270,19 @@ const Editor = ({ onLogout }) => {
             <div className="font-display text-lg font-semibold">Censure / Tableau de bord</div>
           </div>
           <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 border border-white/15 rounded-full p-1 mr-2">
+              {["fr", "en"].map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => setLanguage(option)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-mono uppercase transition-colors ${language === option ? "bg-white text-black" : "text-white/60 hover:text-white"}`}
+                  aria-pressed={language === option}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
             <Button variant="outline" onClick={() => navigate("/")} className="border-white/20 text-white hover:bg-white hover:text-black">
               <ExternalLink className="w-4 h-4 mr-2" /> Voir le site
             </Button>
@@ -260,7 +291,7 @@ const Editor = ({ onLogout }) => {
             </Button>
             <Button onClick={save} disabled={saving} className="bg-white text-black hover:bg-white/90">
               {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
-              Sauvegarder
+              Sauvegarder {language.toUpperCase()}
             </Button>
             <Button variant="outline" onClick={onLogout} className="border-white/20 text-white hover:bg-white hover:text-black">
               <LogOut className="w-4 h-4" />
