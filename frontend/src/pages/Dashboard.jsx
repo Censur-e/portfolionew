@@ -37,7 +37,7 @@ const LoginScreen = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#050505] text-white flex items-center justify-center px-6">
+    <div className="min-h-screen w-full bg-[#0b0b0b] text-white flex items-center justify-center px-6">
       <div className="w-full max-w-md">
         <div className="mb-10">
           <div className="font-mono text-[11px] uppercase tracking-[0.25em] text-white/50 mb-3">
@@ -204,7 +204,7 @@ const Editor = ({ onLogout }) => {
 
   if (loading || !contentByLanguage) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#050505] text-white">
+      <div className="min-h-screen flex items-center justify-center bg-[#0b0b0b] text-white">
         <Loader2 className="w-6 h-6 animate-spin" />
       </div>
     );
@@ -261,7 +261,7 @@ const Editor = ({ onLogout }) => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#050505] text-white">
+    <div className="min-h-screen w-full bg-[#0b0b0b] text-white">
       {/* Top bar */}
       <header className="sticky top-0 z-40 backdrop-blur bg-black/80 border-b border-white/10">
         <div className="max-w-[1280px] mx-auto px-6 py-4 flex items-center justify-between">

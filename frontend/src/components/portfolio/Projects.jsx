@@ -1,27 +1,28 @@
-import React, { useContext, useMemo, useRef, useState } from "react";
-import { ArrowUpRight } from "lucide-react";
+import React, { useContext, useMemo, useState } from "react";
+import { ArrowUpRight, Play, ExternalLink, Maximize2 } from "lucide-react";
 import { SiteContext } from "./Portfolio";
+import { sound } from "../../lib/sound";
+import { DEFAULT_CONTENT, UI_TRANSLATIONS } from "../../mock";
+import ScrambleText from "./ScrambleText";
+import ProjectModal from "./ProjectModal";
 
 // Convert YouTube / Vimeo watch URLs to embed URLs
 const toEmbedUrl = (raw) => {
   if (!raw) return "";
   try {
     const url = new URL(raw);
-    // YouTube full
     if (url.hostname.includes("youtube.com") && url.searchParams.get("v")) {
       return `https://www.youtube.com/embed/${url.searchParams.get("v")}?autoplay=0&rel=0`;
     }
-    // youtu.be short
     if (url.hostname.includes("youtu.be")) {
       const id = url.pathname.replace("/", "");
       return `https://www.youtube.com/embed/${id}?autoplay=0&rel=0`;
     }
-    // Vimeo
     if (url.hostname.includes("vimeo.com") && !url.hostname.includes("player")) {
       const id = url.pathname.split("/").filter(Boolean)[0];
       return `https://player.vimeo.com/video/${id}`;
     }
-    return raw; // already an embed URL or other
+    return raw;
   } catch (e) {
     return raw;
   }
@@ -34,7 +35,7 @@ const ProjectMedia = ({ project }) => {
     return (
       <video
         src={image}
-        className="project-img w-full h-full object-cover"
+        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         autoPlay
         muted
         loop
@@ -48,8 +49,7 @@ const ProjectMedia = ({ project }) => {
       <iframe
         src={toEmbedUrl(image)}
         title={title}
-        className="project-img w-full h-full"
-        frameBorder="0"
+        className="w-full h-full border-0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
       />
@@ -59,147 +59,204 @@ const ProjectMedia = ({ project }) => {
     <img
       src={image}
       alt={title}
-      className="project-img w-full h-full object-cover"
+      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
       loading="lazy"
     />
   );
 };
 
 const Projects = () => {
-  const { projects, translations } = useContext(SiteContext);
-  const scrollerRef = useRef(null);
+  const context = useContext(SiteContext) || {};
+  const projects = Array.isArray(context.projects) ? context.projects : DEFAULT_CONTENT.projects;
+  const translations = context.translations || UI_TRANSLATIONS.fr;
   const [category, setCategory] = useState("created");
+  const [selectedProject, setSelectedProject] = useState(null);
 
-  // Split by category (default undefined = "created")
   const filtered = useMemo(
     () => projects.filter((p) => (p.category || "created") === category),
     [projects, category]
   );
 
-  const onWheel = (e) => {
-    if (!scrollerRef.current) return;
-    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-      scrollerRef.current.scrollLeft += e.deltaY;
-    }
-  };
-
   const tabs = [
-    { key: "created", label: translations.createdProjects },
-    { key: "collab", label: translations.collabProjects },
+    { key: "created", label: translations.createdProjects || "Mes créations" },
+    { key: "collab", label: translations.collabProjects || "Collaborations" },
   ];
 
+  const handleTabChange = (key) => {
+    sound.playSwitch();
+    setCategory(key);
+  };
+
   return (
-    <section id="work" className="relative w-full py-28 md:py-40">
-      <div className="mx-auto max-w-[1640px] px-6 md:px-10">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <div className="flex items-center gap-4 font-mono text-[11px] uppercase tracking-[0.25em] text-white/50 mb-6">
-              <span className="w-8 h-px bg-white/40" />
-              {translations.projectsEyebrow}
-            </div>
-            <h2 className="font-display text-white text-5xl md:text-7xl lg:text-[8.5vw] font-semibold leading-[0.9] tracking-[-0.04em]">
-              {translations.projectsTitleBefore}<br className="hidden md:block" />
-              <span className="text-outline">{translations.projectsTitleEmphasis}</span>
-            </h2>
-          </div>
-          <p className="max-w-sm text-white/55 text-sm md:text-base">
-            {translations.projectsIntro}
-          </p>
+    <section id="work" className="relative w-full py-28 md:py-36 bg-[#0b0b0b] overflow-hidden">
+      {/* Ambient background halo */}
+      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-white/[0.025] blur-[150px] halo-breathe pointer-events-none" />
+
+      <div className="relative z-10 mx-auto max-w-[1640px] px-6 md:px-10">
+        {/* Section Eyebrow */}
+        <div className="flex items-center gap-3 mb-6">
+          <span className="font-doto text-base text-white/50 glow-number">02</span>
+          <span className="w-6 h-px bg-white/20" />
+          <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-white/50 cursor-pointer">
+            <ScrambleText text={translations.projectsEyebrow || "Projets"} />
+          </span>
         </div>
 
-        {/* Toggle Créations / Collaborations */}
-        <div className="mt-10 md:mt-14 inline-flex items-center gap-1 rounded-full border border-white/15 p-1 bg-white/[0.02]">
-          {tabs.map((t) => {
-            const active = category === t.key;
-            const count = projects.filter((p) => (p.category || "created") === t.key).length;
-            return (
-              <button
-                key={t.key}
-                onClick={() => setCategory(t.key)}
-                data-cursor="hover"
-                className={`px-5 md:px-7 py-2.5 rounded-full text-sm md:text-base transition-colors flex items-center gap-2 ${
-                  active
-                    ? "bg-white text-black"
-                    : "text-white/70 hover:text-white"
-                }`}
-              >
-                <span>{t.label}</span>
-                <span
-                  className={`font-mono text-[10px] px-2 py-0.5 rounded-full ${
-                    active ? "bg-black/15 text-black" : "bg-white/10 text-white/60"
+        {/* Section Heading & Category Switcher */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16 md:mb-20">
+          <div>
+            <h2 className="text-4xl sm:text-6xl md:text-7xl font-sans font-bold tracking-tight text-white leading-[1.05]">
+              {translations.projectsTitleBefore || "Mes "}
+              <span className="font-serif italic font-normal text-white/90">
+                {translations.projectsTitleEmphasis || "projets,"}
+              </span>
+            </h2>
+            <p className="mt-4 text-white/50 text-sm md:text-base max-w-lg font-light">
+              {translations.projectsIntro ||
+                "Une sélection de travaux récents — interfaces Roblox, HUD, lobbies compétitifs et systèmes visuels."}
+            </p>
+          </div>
+
+          {/* Frosted Glass Tabs */}
+          <div className="inline-flex items-center gap-1.5 p-1.5 rounded-2xl bg-white/[0.04] border border-white/10 self-start lg:self-end">
+            {tabs.map((t) => {
+              const active = category === t.key;
+              const count = projects.filter((p) => (p.category || "created") === t.key).length;
+              return (
+                <button
+                  key={t.key}
+                  onClick={() => handleTabChange(t.key)}
+                  className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-sans transition-all flex items-center gap-2.5 ${
+                    active
+                      ? "bg-white text-black font-semibold shadow-md"
+                      : "text-white/60 hover:text-white hover:bg-white/5"
                   }`}
                 >
-                  {String(count).padStart(2, "0")}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {filtered.length === 0 ? (
-        <div className="mx-auto max-w-[1640px] px-6 md:px-10 mt-12">
-          <p className="text-white/40 text-sm">{translations.emptyProjects}</p>
-        </div>
-      ) : (
-        <div
-          ref={scrollerRef}
-          onWheel={onWheel}
-          className="mt-14 md:mt-20 flex gap-6 md:gap-10 overflow-x-auto no-scrollbar px-6 md:px-10 pb-10 snap-x snap-mandatory"
-        >
-          {filtered.map((p, i) => (
-            <article
-              key={p.id}
-              data-cursor="hover"
-              className="project-card group relative shrink-0 w-[88vw] md:w-[68vw] lg:w-[56vw] xl:w-[46vw] snap-center"
-            >
-              <div className="relative overflow-hidden rounded-2xl aspect-[4/5] md:aspect-[16/10] bg-white/5">
-                <ProjectMedia project={p} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none" />
-
-                <div className="absolute top-5 left-6 right-6 flex items-start justify-between text-white/80">
-                  <span className="font-mono text-[11px] uppercase tracking-[0.25em]">
-                    {String(i + 1).padStart(2, "0")} / {String(filtered.length).padStart(2, "0")}
+                  <span>{t.label}</span>
+                  <span
+                    className={`font-doto text-[11px] px-1.5 py-0.5 rounded-md ${
+                      active ? "bg-black/15 text-black font-bold" : "bg-white/10 text-white/50"
+                    }`}
+                  >
+                    {String(count).padStart(2, "0")}
                   </span>
-                  <span className="font-mono text-[11px] uppercase tracking-[0.25em]">{p.year}</span>
-                </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
-                <div className="absolute bottom-5 left-6 right-6">
-                  <h3 className="project-title font-display text-white font-semibold text-4xl md:text-6xl tracking-[-0.04em] leading-[0.95]">
-                    {p.title}
-                  </h3>
-                </div>
-              </div>
+        {/* Projects Grid (Bachuki Style Luxury Cards) */}
+        {filtered.length === 0 ? (
+          <div className="luxury-card p-12 text-center text-white/40 font-mono text-sm">
+            {translations.emptyProjects || "Aucun projet dans cette catégorie pour le moment."}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+            {filtered.map((p, i) => (
+              <article
+                key={p.id || i}
+                className="luxury-card group overflow-hidden flex flex-col justify-between transition-all hover:border-white/30"
+              >
+                {/* Media Container with Click to Expand */}
+                <div
+                  onClick={() => {
+                    sound.playPop();
+                    setSelectedProject(p);
+                  }}
+                  className="relative aspect-[16/10] overflow-hidden bg-black/40 border-b border-white/10 cursor-pointer"
+                >
+                  <ProjectMedia project={p} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent pointer-events-none" />
 
-              <div className="mt-6 flex items-start justify-between gap-6">
-                <div>
-                  <div className="text-white text-base md:text-lg">{p.subtitle}</div>
-                  <div className="mt-1 text-white/50 text-sm">{p.description}</div>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {p.tags.map((t) => (
-                      <span
-                        key={t}
-                        className="font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-1 rounded-full border border-white/15 text-white/65"
-                      >
-                        {t}
-                      </span>
-                    ))}
+                  {/* Top floating badges */}
+                  <div className="absolute top-4 left-5 right-5 flex items-center justify-between pointer-events-none">
+                    <span className="font-doto text-base text-white font-bold px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/15 glow-number">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="font-mono text-[11px] text-white/80 px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/15">
+                      {p.year || "2025"}
+                    </span>
+                  </div>
+
+                  {/* In-Media Title */}
+                  <div className="absolute bottom-4 left-5 right-5">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/60 mb-1">
+                      {p.role || "Roblox & UI"}
+                    </div>
+                    <h3 className="font-sans text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                      <ScrambleText text={p.title} />
+                    </h3>
                   </div>
                 </div>
-                <a
-                  href="#contact"
-                  data-cursor="hover"
-                  className="shrink-0 mt-1 w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-white/80 hover:bg-white hover:text-black transition-colors"
-                  aria-label={`Ouvrir ${p.title}`}
-                >
-                  <ArrowUpRight className="w-5 h-5" strokeWidth={1.5} />
-                </a>
-              </div>
-            </article>
-          ))}
-          <div className="shrink-0 w-[20vw]" aria-hidden="true" />
-        </div>
-      )}
+
+                {/* Card Details */}
+                <div className="p-6 sm:p-7 flex flex-col flex-1 justify-between gap-6">
+                  <div>
+                    {p.subtitle && (
+                      <div className="font-serif italic text-lg text-white/90 mb-2">
+                        {p.subtitle}
+                      </div>
+                    )}
+                    <p className="text-white/60 text-sm leading-relaxed font-light">
+                      {p.description}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-white/10">
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-1.5">
+                      {p.tags?.map((t) => (
+                        <span
+                          key={t}
+                          className="font-mono text-[10px] uppercase tracking-[0.15em] px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/10 text-white/70 hover:border-white/30 transition-colors cursor-pointer"
+                        >
+                          <ScrambleText text={t} />
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Action buttons */}
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          sound.playPop();
+                          setSelectedProject(p);
+                        }}
+                        className="inline-flex items-center gap-1.5 text-xs font-mono text-white/80 hover:text-white transition-colors px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 active:scale-95"
+                        title="Ouvrir la vue détaillée"
+                      >
+                        <Maximize2 className="w-3.5 h-3.5" />
+                        <span>Aperçu</span>
+                      </button>
+
+                      <a
+                        href="#contact"
+                        onClick={() => sound.playClick()}
+                        className="inline-flex items-center gap-1 text-xs font-mono text-white/60 hover:text-white transition-colors"
+                      >
+                        <span>Contact</span>
+                        <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+
+        {/* Immersive Project Modal */}
+        {selectedProject && (
+          <ProjectModal
+            project={selectedProject}
+            allProjects={filtered}
+            onClose={() => setSelectedProject(null)}
+            onSelectProject={setSelectedProject}
+          />
+        )}
+      </div>
     </section>
   );
 };

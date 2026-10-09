@@ -20,8 +20,14 @@ export default defineConfig({
     port: 3000,
     strictPort: true,
     allowedHosts: true,
-    hmr: {
-      clientPort: 443,
+    ...(process.env.HMR_CLIENT_PORT
+      ? { hmr: { clientPort: Number(process.env.HMR_CLIENT_PORT) } }
+      : {}),
+    proxy: {
+      '/api': {
+        target: process.env.REACT_APP_BACKEND_URL || 'http://127.0.0.1:8000',
+        changeOrigin: true,
+      },
     },
   },
   preview: {

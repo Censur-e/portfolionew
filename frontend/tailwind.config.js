@@ -7,12 +7,23 @@ module.exports = {
   ],
   theme: {
   	extend: {
+  		fontFamily: {
+  			sans: ['Sora', 'system-ui', 'sans-serif'],
+  			serif: ['"Instrument Serif"', 'Georgia', 'serif'],
+  			display: ['"Instrument Serif"', 'Georgia', 'serif'],
+  			doto: ['Doto', 'monospace'],
+  			mono: ['"JetBrains Mono"', 'monospace'],
+  		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
+  			obsidian: '#0b0b0b',
+  			surface: '#121212',
+  			surfaceRaised: '#18181b',
+  			borderMuted: 'rgba(255, 255, 255, 0.08)',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

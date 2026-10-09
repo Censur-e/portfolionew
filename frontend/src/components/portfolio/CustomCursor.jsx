@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 
 /**
  * Custom flashlight cursor.
@@ -68,9 +69,15 @@ const CustomCursor = () => {
 
   return (
     <>
-      <div ref={ringRef} className="cen-cursor-ring" />
-      <div ref={dotRef} className="cen-cursor" />
       <div className="flashlight-grid" aria-hidden="true" />
+      {typeof document !== "undefined" &&
+        createPortal(
+          <>
+            <div ref={ringRef} className="cen-cursor-ring" aria-hidden="true" />
+            <div ref={dotRef} className="cen-cursor" aria-hidden="true" />
+          </>,
+          document.body
+        )}
     </>
   );
 };
