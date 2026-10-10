@@ -186,7 +186,7 @@ const About = () => {
                     <div className="text-[11px] text-emerald-400/80 font-mono flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                        <span>{translations.processInactive || "Session active"}</span>
+                        <span>{translations.processInactive}</span>
                       </div>
                       <span className="text-[10px] text-white/30">clique une commande</span>
                     </div>
