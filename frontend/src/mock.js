@@ -110,7 +110,7 @@ export const UI_TRANSLATIONS = {
     aboutTitleEmphasis: "l'artisanat",
     aboutTitleAfter: " précis.",
     currentStudy: "Études actuelles",
-    processInactive: "— processus inactif. prêt quand tu l'es.",
+    processInactive: "",
     projectsEyebrow: "(02) Projets",
     projectsTitleBefore: "Ce que j'ai ",
     projectsTitleEmphasis: "conçu & lancé.",
