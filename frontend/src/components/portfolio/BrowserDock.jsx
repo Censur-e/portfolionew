@@ -182,7 +182,7 @@ export const BrowserDock = ({ translations, language, changeLanguage }) => {
           title="Ouvrir le menu de navigation"
         >
           <span className="font-mono text-[11px] sm:text-xs tracking-tight flex items-center gap-1.5 whitespace-nowrap">
-            <span className="text-white font-semibold">{pseudo}.fr</span>
+            <span className="text-white font-semibold">{pseudo}.lol</span>
             <span className="text-white/30">/</span>
             <span className="text-white/40 font-mono">#</span>
             <span className="text-white font-medium">{activeObj.label}</span>
