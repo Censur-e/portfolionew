@@ -93,13 +93,13 @@ export const BrowserDock = ({ translations, language, changeLanguage }) => {
   return (
     <div
       ref={dockRef}
-      className="fixed bottom-4 md:bottom-8 left-1/2 z-50 select-none animate-dock-entrance max-w-[calc(100vw-24px)]"
+      className="browser-dock-container fixed left-1/2 z-50 select-none animate-dock-entrance w-[calc(100%-20px)] sm:w-auto max-w-[calc(100vw-20px)] sm:max-w-none"
     >
       {/* Floating Anchor & Settings Popup (Frosted Glass with Pure Categories) */}
       {menuOpen && (
         <div
           ref={popupRef}
-          className="browser-dock-popup absolute bottom-[calc(100%+14px)] left-1/2 -translate-x-1/2 w-[260px] sm:w-[280px] p-2 text-white text-xs animate-in fade-in zoom-in-95 duration-200"
+          className="browser-dock-popup absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 w-[calc(100vw-32px)] max-w-[280px] p-2 text-white text-xs animate-in fade-in zoom-in-95 duration-200"
         >
           <div className="space-y-1">
             {SECTIONS.map((sec) => {
@@ -129,7 +129,7 @@ export const BrowserDock = ({ translations, language, changeLanguage }) => {
       {/* Main Dock Capsule (Enlarged Luxury Base) */}
       <nav
         aria-label="Barre de navigation principale"
-        className="browser-dock flex items-center gap-2 sm:gap-2.5 p-2 sm:p-2.5 text-white shadow-2xl"
+        className="browser-dock w-full sm:w-auto flex items-center justify-between sm:justify-start gap-1 sm:gap-2.5 p-1 sm:p-2.5 text-white shadow-2xl"
       >
         {/* Home Button to return to top */}
         <button
@@ -137,13 +137,13 @@ export const BrowserDock = ({ translations, language, changeLanguage }) => {
           onClick={() => scrollToSection("hero")}
           title="Retour au début"
           aria-label="Retour au début de la page"
-          className="w-10 h-10 rounded-[14px] flex items-center justify-center bg-white/[0.06] hover:bg-white/[0.14] border border-white/10 text-white/80 hover:text-white active:scale-95 transition-all shrink-0"
+          className="w-8 h-8 sm:w-10 sm:h-10 rounded-[10px] sm:rounded-[14px] flex items-center justify-center bg-white/[0.06] hover:bg-white/[0.14] border border-white/10 text-white/80 hover:text-white active:scale-95 transition-all shrink-0"
         >
-          <Home className="w-4 h-4" />
+          <Home className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </button>
 
         {/* Previous / Next Arrow Controls */}
-        <div className="hidden sm:flex items-center bg-white/[0.06] border border-white/10 rounded-[14px] p-1">
+        <div className="hidden sm:flex items-center bg-white/[0.06] border border-white/10 rounded-[14px] p-1 shrink-0">
           <button
             type="button"
             onClick={() => navigateRelative(-1)}
@@ -167,28 +167,28 @@ export const BrowserDock = ({ translations, language, changeLanguage }) => {
           </button>
         </div>
 
-        {/* Address Bar Capsule with dynamic pseudo.fr / #... */}
+        {/* Address Bar Capsule with dynamic pseudo.lol / #... */}
         <button
           type="button"
           onClick={() => {
             sound.playSwitch();
             setMenuOpen(!menuOpen);
           }}
-          className={`flex items-center justify-between gap-3 px-4 sm:px-6 py-2.5 rounded-[14px] text-xs font-sans transition-all duration-200 border min-w-[210px] sm:min-w-[260px] ${
+          className={`flex items-center justify-between gap-1.5 sm:gap-3 px-2 sm:px-5 py-2 sm:py-2.5 rounded-[10px] sm:rounded-[14px] text-xs font-sans transition-all duration-200 border min-w-0 flex-1 sm:flex-initial sm:min-w-[240px] md:min-w-[260px] ${
             menuOpen
               ? "bg-white/20 border-white/25 text-white"
               : "bg-white/[0.08] hover:bg-white/[0.14] border-white/10 text-white/90"
           }`}
           title="Ouvrir le menu de navigation"
         >
-          <span className="font-mono text-[11px] sm:text-xs tracking-tight flex items-center gap-1.5 whitespace-nowrap">
-            <span className="text-white font-semibold">{pseudo}.lol</span>
-            <span className="text-white/30">/</span>
-            <span className="text-white/40 font-mono">#</span>
-            <span className="text-white font-medium">{activeObj.label}</span>
+          <span className="font-mono text-[10px] sm:text-xs tracking-tight flex items-center gap-1 sm:gap-1.5 min-w-0 truncate">
+            <span className="text-white font-semibold shrink-0">{pseudo}.lol</span>
+            <span className="text-white/30 shrink-0">/</span>
+            <span className="text-white/40 font-mono shrink-0">#</span>
+            <span className="text-white font-medium truncate">{activeObj.label}</span>
           </span>
           <span
-            className={`ml-1 text-[11px] text-white/40 transition-transform duration-200 ${
+            className={`ml-0.5 sm:ml-1 text-[10px] sm:text-[11px] text-white/40 shrink-0 transition-transform duration-200 ${
               menuOpen ? "rotate-180" : ""
             }`}
           >
@@ -202,24 +202,24 @@ export const BrowserDock = ({ translations, language, changeLanguage }) => {
           onClick={toggleLanguage}
           title={`Langue actuelle: ${language.toUpperCase()} (cliquer pour basculer)`}
           aria-label={`Langue actuelle: ${language.toUpperCase()}, cliquer pour passer en ${language === "fr" ? "anglais" : "français"}`}
-          className="relative h-10 px-1 rounded-[14px] flex items-center bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 active:scale-95 transition-all select-none"
+          className="relative h-8 sm:h-10 px-0.5 sm:px-1 rounded-[10px] sm:rounded-[14px] flex items-center bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 active:scale-95 transition-all select-none shrink-0"
         >
-          <div className="relative flex items-center text-[10px] font-mono font-bold uppercase">
+          <div className="relative flex items-center text-[9px] sm:text-[10px] font-mono font-bold uppercase">
             {/* Sliding Pill Indicator */}
             <div
-              className={`absolute top-0 bottom-0 w-7 bg-white rounded-[10px] shadow-sm transition-transform duration-300 ease-out ${
-                language === "fr" ? "translate-x-0" : "translate-x-7"
+              className={`absolute top-0 bottom-0 w-5 sm:w-7 bg-white rounded-[7px] sm:rounded-[10px] shadow-sm transition-transform duration-300 ease-out ${
+                language === "fr" ? "translate-x-0" : "translate-x-5 sm:translate-x-7"
               }`}
             />
             <span
-              className={`relative z-10 w-7 h-8 flex items-center justify-center transition-colors duration-200 ${
+              className={`relative z-10 w-5 sm:w-7 h-7 sm:h-8 flex items-center justify-center transition-colors duration-200 ${
                 language === "fr" ? "text-black" : "text-white/45 hover:text-white"
               }`}
             >
               FR
             </span>
             <span
-              className={`relative z-10 w-7 h-8 flex items-center justify-center transition-colors duration-200 ${
+              className={`relative z-10 w-5 sm:w-7 h-7 sm:h-8 flex items-center justify-center transition-colors duration-200 ${
                 language === "en" ? "text-black" : "text-white/45 hover:text-white"
               }`}
             >
@@ -234,13 +234,13 @@ export const BrowserDock = ({ translations, language, changeLanguage }) => {
           onClick={toggleSound}
           title={muted ? "Activer les sons d'interface" : "Désactiver les sons d'interface"}
           aria-label={muted ? "Activer le son" : "Couper le son"}
-          className={`w-10 h-10 rounded-[14px] flex items-center justify-center transition-all duration-200 border ${
+          className={`w-8 h-8 sm:w-10 sm:h-10 rounded-[10px] sm:rounded-[14px] flex items-center justify-center transition-all duration-200 border shrink-0 ${
             muted
               ? "bg-rose-500/15 border-rose-500/30 text-rose-400 hover:bg-rose-500/25"
               : "bg-white/[0.06] hover:bg-white/[0.14] border-white/10 text-white/80 hover:text-white"
           }`}
         >
-          {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          {muted ? <VolumeX className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
         </button>
 
         {/* Direct Contact Button */}
@@ -249,7 +249,7 @@ export const BrowserDock = ({ translations, language, changeLanguage }) => {
           onClick={() => scrollToSection("contact")}
           title="Prendre contact"
           aria-label="Aller à la section contact"
-          className="h-10 px-4 sm:px-5 rounded-[14px] bg-white text-black hover:bg-white/90 active:scale-95 transition flex items-center gap-2 text-xs font-medium font-sans"
+          className="w-8 h-8 sm:w-auto sm:h-10 sm:px-4 md:sm:px-5 rounded-[10px] sm:rounded-[14px] bg-white text-black hover:bg-white/90 active:scale-95 transition flex items-center justify-center gap-1.5 sm:gap-2 text-xs font-medium font-sans shrink-0"
         >
           <Mail className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Contact</span>
